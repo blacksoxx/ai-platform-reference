@@ -1,0 +1,50 @@
+# The platform certificate chain, from cert-manager docs "SelfSigned" and "Bootstrapping CA
+# Issuers": a self-signed ClusterIssuer signs one CA Certificate, and a second ClusterIssuer
+# issues from that CA. https://cert-manager.io/docs/configuration/selfsigned/
+#
+# These are custom resources of the chart in the same Application, so they wait one wave and
+# skip Argo CD's dry run until the CRDs exist.
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  selfSigned: {}
+---
+# The root CA. For a ClusterIssuer the secret "is assumed to reference secret in cert-manager
+# namespace", so the Certificate lives there.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: platform-root-ca
+  namespace: cert-manager
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  isCA: true
+  commonName: ai-platform root CA
+  secretName: platform-root-ca
+  duration: 87600h # ten years; the leaf certificates below it are short-lived
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
+    group: cert-manager.io
+---
+# What everything else asks certificates from.
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: platform-ca
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  ca:
+    secretName: platform-root-ca

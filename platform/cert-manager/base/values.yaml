@@ -1,0 +1,13 @@
+# Values for jetstack/cert-manager shared by every environment.
+# Chart: https://artifacthub.io/packages/helm/cert-manager/cert-manager
+crds:
+  # The chart installs and keeps the CRDs; Argo CD prunes nothing it did not create.
+  enabled: true
+  keep: true
+
+prometheus:
+  enabled: true
+  servicemonitor:
+    # Scraped by the platform Prometheus; the ServiceMonitor CRD arrives one sync wave earlier
+    # with platform/prometheus-operator-crds.
+    enabled: true
