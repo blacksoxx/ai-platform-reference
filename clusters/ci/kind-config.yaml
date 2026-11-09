@@ -1,0 +1,30 @@
+# kind cluster for the ci environment: one control plane, two workers.
+# The workers carry the label the fake GPU operator looks for, so each advertises simulated
+# nvidia.com/gpu resources once the operator runs (see platform/fake-gpu-operator).
+#
+# Node image: kind v0.33.0 release notes list the images built for that release and say
+# "You must use the @sha256 digest to guarantee an image built for this release".
+# https://github.com/kubernetes-sigs/kind/releases/tag/v0.33.0
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: ai-platform-ci
+networking:
+  # Cilium is the CNI and replaces kube-proxy. Cilium's Gateway API support states:
+  # "Cilium must be configured with the kube-proxy replacement, using kubeProxyReplacement=true"
+  # https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/
+  disableDefaultCNI: true
+  kubeProxyMode: none
+nodes:
+  - role: control-plane
+    image: kindest/node:v1.36.4@sha256:099e049362a1526b2db71494e1947aae99bd16290d7c895f2b7ea312e3cbfaed
+  - role: worker
+    image: kindest/node:v1.36.4@sha256:099e049362a1526b2db71494e1947aae99bd16290d7c895f2b7ea312e3cbfaed
+    labels:
+      # fake-gpu-operator README: "kubectl label node <node-name> run.ai/simulated-gpu-node-pool=default"
+      run.ai/simulated-gpu-node-pool: default
+      ai-platform.io/gpu: nvidia
+  - role: worker
+    image: kindest/node:v1.36.4@sha256:099e049362a1526b2db71494e1947aae99bd16290d7c895f2b7ea312e3cbfaed
+    labels:
+      run.ai/simulated-gpu-node-pool: default
+      ai-platform.io/gpu: nvidia

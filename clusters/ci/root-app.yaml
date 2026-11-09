@@ -1,0 +1,20 @@
+# The one Application applied by hand (by clusters/ci/bootstrap.sh). It points at apps/ci,
+# whose Applications bring up everything else in sync-wave order.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/blacksoxx/ai-platform-reference.git
+    targetRevision: main
+    path: apps/ci
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

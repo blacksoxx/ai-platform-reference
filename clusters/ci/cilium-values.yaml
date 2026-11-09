@@ -1,0 +1,42 @@
+# Cilium for the ci kind cluster, installed by clusters/ci/bootstrap.sh before Argo CD exists
+# (a CNI cannot be applied by a controller that needs the network to run). Every key below is
+# in the chart's values.yaml for 1.20.4 (helm show values cilium/cilium --version 1.20.4).
+
+# "Kubernetes Without kube-proxy": "--set kubeProxyReplacement=true", with k8sServiceHost and
+# k8sServicePort passed by the bootstrap, because the API server address is only known once the
+# kind cluster exists. https://docs.cilium.io/en/stable/network/kubernetes/kubeproxy-free/
+kubeProxyReplacement: true
+
+# kind installation page: "--set ipam.mode=kubernetes": pod IPs come from the PodCIDR that
+# Kubernetes assigns to each node. https://docs.cilium.io/en/stable/installation/kind/
+ipam:
+  mode: kubernetes
+
+# "Cilium Gateway API Controller can be enabled with helm flag gatewayAPI.enabled set as true".
+# The Gateway API CRDs are applied by the bootstrap before this chart.
+# https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/
+gatewayAPI:
+  enabled: true
+
+# Hubble gives flow visibility; the UI shows the service map and is how tenant isolation is
+# demonstrated. Both are reachable through the Gateway (platform/cilium).
+hubble:
+  enabled: true
+  relay:
+    enabled: true
+  ui:
+    enabled: true
+
+# LoadBalancer addresses on a kind cluster: LB-IPAM allocates from a CiliumLoadBalancerIPPool
+# and L2 announcements answer ARP for them on the kind Docker network.
+# "--set l2announcements.enabled=true" and "Kube Proxy replacement mode must be enabled."
+# https://docs.cilium.io/en/stable/network/l2-announcements/
+l2announcements:
+  enabled: true
+
+# kind installation page: "--set image.pullPolicy=IfNotPresent"
+image:
+  pullPolicy: IfNotPresent
+
+operator:
+  replicas: 1

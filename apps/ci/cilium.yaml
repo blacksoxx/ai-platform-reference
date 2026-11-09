@@ -1,0 +1,21 @@
+# Cilium configuration (IP pool, L2 announcements, later the Gateway). The CNI was installed by
+# the bootstrap; this Application owns everything on top of it.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cilium
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  source:
+    path: platform/cilium/overlays/ci
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
