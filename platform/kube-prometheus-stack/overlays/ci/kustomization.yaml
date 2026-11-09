@@ -6,7 +6,7 @@ resources:
 helmCharts:
   - name: kube-prometheus-stack
     repo: https://prometheus-community.github.io/helm-charts
-    version: 93.1.1 # operator v0.95.1, checked 2026-11-09
+    version: 92.22.0 # operator v0.94.2; 93.x ships operator v0.95.1 whose image is amd64-only (checked 2026-11-09)
     releaseName: monitoring
     namespace: monitoring
     includeCRDs: false

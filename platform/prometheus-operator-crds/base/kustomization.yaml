@@ -1,7 +1,7 @@
 # The Prometheus Operator CRDs (ServiceMonitor, PodMonitor, PrometheusRule, ...) on their own,
 # one sync wave before everything else, so that any component can ship a ServiceMonitor or a
 # PrometheusRule without waiting for the monitoring stack. kube-prometheus-stack is installed
-# later with crds.enabled=false and the same operator version (chart app version v0.95.1).
+# later with crds.enabled=false and the same operator version (chart app version v0.94.2).
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources: []

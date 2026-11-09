@@ -25,6 +25,13 @@ defaultRules:
     kubeSchedulerRecording: false
     kubeProxy: false
 
+prometheusOperator:
+  admissionWebhooks:
+    # The webhook certificate comes from cert-manager (platform/cert-manager) instead of the
+    # chart's patch Jobs, which run as Helm hooks and are awkward under a GitOps controller.
+    certManager:
+      enabled: true
+
 prometheus:
   prometheusSpec:
     # Pick up every ServiceMonitor, PodMonitor, PrometheusRule and Probe in the cluster, not only
