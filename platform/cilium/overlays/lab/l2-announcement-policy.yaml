@@ -1,0 +1,14 @@
+# The lab nodes answer ARP for the Gateway address on their LAN interfaces. Cilium docs, L2
+# announcements: "for each service one node at a time will respond to ARP/NDP queries".
+# The interface pattern covers the usual Linux names (eth0, enp5s0, eno1); adjust if the lab
+# nodes use something else (ip -br link on the node).
+apiVersion: cilium.io/v2alpha1
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: lab
+spec:
+  interfaces:
+    - ^eth[0-9]+
+    - ^en[a-z0-9]+
+  externalIPs: true
+  loadBalancerIPs: true

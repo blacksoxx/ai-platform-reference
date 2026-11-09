@@ -1,0 +1,11 @@
+# Addresses for the lab Gateway. SET THIS BEFORE BOOTSTRAPPING THE LAB: the range must be free
+# on the network the lab nodes share, and reachable from the operator's machine; the nodes
+# answer ARP for it (L2 announcements). 192.0.2.0/24 is a documentation range (RFC 5737) that
+# routes nowhere, so the Gateway stays unreachable until it is replaced (docs/setup-lab.md).
+apiVersion: cilium.io/v2
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: lab
+spec:
+  blocks:
+    - cidr: 192.0.2.0/24

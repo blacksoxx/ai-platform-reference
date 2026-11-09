@@ -1,0 +1,22 @@
+# Wave 2, with the Gateway: the route to this Service lives in the Gateway Application, and a
+# route is only Healthy once both its Gateway and its backend exist.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: inference
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  project: default
+  source:
+    path: platform/inference/overlays/lab
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: inference
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

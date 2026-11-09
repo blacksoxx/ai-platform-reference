@@ -1,0 +1,30 @@
+# Values for the Cilium that RKE2 installs (cni: cilium). RKE2 docs, "Network options":
+# "The HelmChartConfig resource must match the name and namespace of its corresponding
+# HelmChart", placed in /var/lib/rancher/rke2/server/manifests/ before the server starts.
+# Argo CD manages the same object afterwards (platform/cilium/overlays/lab references this file).
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: rke2-cilium
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    # RKE2 docs, kube-proxy replacement with Cilium:
+    kubeProxyReplacement: true
+    k8sServiceHost: "localhost"
+    k8sServicePort: "6443"
+    # Cilium docs, Gateway API: "gatewayAPI.enabled set as true"; the CRDs come from the bootstrap.
+    gatewayAPI:
+      enabled: true
+    # RKE2 docs, "To enable Hubble, use the following chart values":
+    hubble:
+      enabled: true
+      relay:
+        enabled: true
+      ui:
+        enabled: true
+    # LoadBalancer addresses for the Gateway: LB-IPAM pool and L2 announcements in platform/cilium.
+    l2announcements:
+      enabled: true
+    operator:
+      replicas: 1

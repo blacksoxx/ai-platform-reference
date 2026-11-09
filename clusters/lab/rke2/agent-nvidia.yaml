@@ -1,0 +1,15 @@
+# /etc/rancher/rke2/config.yaml on the NVIDIA node (the DGX Spark, arm64).
+# The token goes to /etc/rancher/rke2/config.yaml.d/token.yaml, never into Git.
+
+# "Server to connect to": the control-plane node, supervisor port 9345.
+server: https://lab-control-plane.example.invalid:9345
+
+# "Registering and starting kubelet with set of labels": the vendor label every GPU overlay
+# selects on (platform/nvidia-gpu-operator, workloads/gpu-probe/overlays/lab-nvidia, inference).
+node-label:
+  - ai-platform.io/gpu=nvidia
+
+# "Registering kubelet with set of taints": only workloads that tolerate the vendor taint land
+# on the GPU node, so platform services never compete with inference for it.
+node-taint:
+  - ai-platform.io/gpu=nvidia:NoSchedule

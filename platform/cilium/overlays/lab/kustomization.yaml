@@ -1,0 +1,10 @@
+# lab: RKE2 installs Cilium from the HelmChartConfig that the bootstrap drops into the server's
+# manifests directory; the same file is managed by Argo CD from here so that later changes to
+# the CNI values go through Git. Plus the LoadBalancer pool and L2 announcements for the Gateway.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+  - ../../../../clusters/lab/rke2/manifests/rke2-cilium-config.yaml
+  - lb-ip-pool.yaml
+  - l2-announcement-policy.yaml

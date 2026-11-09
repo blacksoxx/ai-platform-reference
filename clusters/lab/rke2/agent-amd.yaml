@@ -1,0 +1,14 @@
+# /etc/rancher/rke2/config.yaml on the AMD node (the Ryzen AI Max+ box, amd64).
+# The token goes to /etc/rancher/rke2/config.yaml.d/token.yaml, never into Git.
+
+# "Server to connect to": the control-plane node, supervisor port 9345.
+server: https://lab-control-plane.example.invalid:9345
+
+# The vendor label every AMD overlay selects on (platform/amd-device-plugin,
+# platform/amd-metrics-exporter, workloads/gpu-probe/overlays/lab-amd, inference).
+node-label:
+  - ai-platform.io/gpu=amd
+
+# Only workloads that tolerate the vendor taint land on the GPU node.
+node-taint:
+  - ai-platform.io/gpu=amd:NoSchedule

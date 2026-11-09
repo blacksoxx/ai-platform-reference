@@ -1,0 +1,19 @@
+# The one Application applied by hand on the lab cluster (clusters/lab/bootstrap.sh argocd).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/blacksoxx/ai-platform-reference.git
+    targetRevision: main
+    path: apps/lab
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

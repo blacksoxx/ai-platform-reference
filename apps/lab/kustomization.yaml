@@ -1,0 +1,48 @@
+# App of apps for the lab environment (RKE2 on the DGX Spark and the Ryzen AI Max+ box). Same
+# shape as apps/ci: one Application per component, ordered by sync wave; the GPU layer is real.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: argocd
+resources:
+  # wave -1: CRDs other components depend on
+  - prometheus-operator-crds.yaml
+  # wave 0: operators and core services
+  - argocd.yaml
+  - cilium.yaml
+  - cert-manager.yaml
+  - vault.yaml
+  - nvidia-gpu-operator.yaml
+  - amd-device-plugin.yaml
+  - kyverno.yaml
+  - kai-scheduler.yaml
+  # wave 1: needs Vault configured
+  - external-secrets.yaml
+  # wave 2: needs External Secrets, the platform CA and the monitoring CRDs
+  - kube-prometheus-stack.yaml
+  - gateway.yaml
+  - inference.yaml
+  - otel-collector.yaml
+  - dashboards.yaml
+  - alerts.yaml
+  - amd-metrics-exporter.yaml
+  - trivy-operator.yaml
+  - kubescape.yaml
+  - falco.yaml
+  # wave 3: policies, once the engine is up
+  - policies.yaml
+  # wave 4: tenants (an ApplicationSet) and platform workloads
+  - tenants.yaml
+  - workload-gpu-probe-nvidia.yaml
+  - workload-gpu-probe-amd.yaml
+  # wave 5: tenant workloads
+  - workload-interactive-session.yaml
+patches:
+  - target:
+      kind: Application
+    patch: |-
+      - op: add
+        path: /spec/source/repoURL
+        value: https://github.com/blacksoxx/ai-platform-reference.git
+      - op: add
+        path: /spec/source/targetRevision
+        value: main

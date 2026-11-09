@@ -1,0 +1,30 @@
+# /etc/rancher/rke2/config.yaml on the lab control-plane node.
+# RKE2 reads flags from this file with the dashes dropped (docs.rke2.io, server configuration
+# reference). The join token is NOT here: put it in /etc/rancher/rke2/config.yaml.d/token.yaml
+# (see docs/setup-lab.md); RKE2 merges every file in that directory.
+
+# "CNI Plugins to deploy, one of none, calico, canal, cilium, flannel"
+cni: cilium
+
+# "Disable running kube-proxy": Cilium replaces it (kubeProxyReplacement in
+# clusters/lab/rke2/manifests/rke2-cilium-config.yaml). RKE2 docs: "It is not recommended to
+# replace kube-proxy by Cilium if your kernel is not v5.8 or newer"; DGX OS ships 6.11.
+disable-kube-proxy: true
+
+# "Ingress Controllers to deploy, one of none, traefik, ingress-nginx": the platform Gateway
+# (Cilium's Gateway API implementation) is the only entry point, and nothing listens on the
+# nodes' ports 80 and 443 by default.
+ingress-controller: none
+
+# Cilium 1.20 documents the Gateway API v1.6.3 CRDs it supports; the bootstrap applies exactly
+# those, so RKE2's own copy of the Gateway API CRDs stays off.
+disable:
+  - rke2-gateway-api-crd
+
+# The kubeconfig at /etc/rancher/rke2/rke2.yaml readable by the rke2 group, not only root.
+write-kubeconfig-mode: "0640"
+
+# "Add additional hostnames or IPv4/IPv6 addresses as Subject Alternative Names on the server
+# TLS cert": the names the operator and the agents use to reach the API, set per site.
+tls-san:
+  - lab-control-plane.example.invalid

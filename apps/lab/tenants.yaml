@@ -1,0 +1,33 @@
+# One Application per tenant directory, generated from the list below. Adding a team is one
+# line here and one directory under tenants/.
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: tenants
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  goTemplate: true
+  generators:
+    - list:
+        elements:
+          - tenant: team-a
+          - tenant: team-b
+  template:
+    metadata:
+      name: "tenant-{{ .tenant }}"
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/blacksoxx/ai-platform-reference.git
+        targetRevision: main
+        path: "tenants/{{ .tenant }}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .tenant }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - ServerSideApply=true
