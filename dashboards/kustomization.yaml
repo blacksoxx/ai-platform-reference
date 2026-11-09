@@ -20,3 +20,11 @@ configMapGenerator:
         grafana_folder: GPU
     files:
       - gpu/dcgm-exporter-dashboard.json
+  # inference/inference.json: requests in flight and queued, generated tokens per second and
+  # queue depth per backend, vLLM request latency quantiles and KV cache usage.
+  - name: dashboard-inference
+    options:
+      annotations:
+        grafana_folder: Inference
+    files:
+      - inference/inference.json

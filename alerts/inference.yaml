@@ -1,0 +1,62 @@
+# Inference alerts, on the metrics both backends expose on /metrics: llama.cpp (llamacpp:*,
+# tools/server/README.md "GET /metrics") and vLLM (vllm:*, vllm/v1/metrics/loggers.py).
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: inference
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/part-of: ai-platform
+spec:
+  groups:
+    - name: inference.availability
+      rules:
+        - alert: InferenceNoBackend
+          # The front door exists but no backend is being scraped: every Deployment behind the
+          # inference Service is down or still loading its model.
+          expr: |
+            absent(up{job="inference", namespace="inference"} == 1)
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "No inference backend is up"
+            description: "No Pod behind the inference Service answers its metrics endpoint. Completion requests through the Gateway fail."
+            runbook_url: https://github.com/blacksoxx/ai-platform-reference/blob/main/docs/runbooks/inference-no-backend.md
+
+        - alert: InferenceBackendDown
+          expr: up{job="inference", namespace="inference"} == 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Inference backend {{ $labels.pod }} is down"
+            description: "The backend {{ $labels.pod }} stopped answering its metrics endpoint. The Service still has the other backends, if any."
+            runbook_url: https://github.com/blacksoxx/ai-platform-reference/blob/main/docs/runbooks/inference-backend-down.md
+
+    - name: inference.latency
+      rules:
+        - alert: InferenceLatencyHigh
+          # vLLM histogram of end-to-end request latency; p95 above 10 seconds for 10 minutes.
+          expr: |
+            histogram_quantile(0.95, sum by (le) (rate(vllm:e2e_request_latency_seconds_bucket[5m]))) > 10
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Inference p95 latency above 10 s"
+            description: "The 95th percentile of end-to-end request latency on vLLM has been above 10 seconds for 10 minutes."
+            runbook_url: https://github.com/blacksoxx/ai-platform-reference/blob/main/docs/runbooks/inference-latency-high.md
+
+        - alert: InferenceRequestsQueued
+          # Requests waiting in front of the backends: vLLM's waiting queue and llama.cpp's
+          # deferred requests. Sustained waiting means the GPUs are saturated.
+          expr: |
+            sum(vllm:num_requests_waiting) + sum(llamacpp:requests_deferred) > 10
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "More than 10 inference requests have been queued for 10 minutes"
+            description: "Backends are saturated; requests wait before they are processed."
+            runbook_url: https://github.com/blacksoxx/ai-platform-reference/blob/main/docs/runbooks/inference-requests-queued.md
