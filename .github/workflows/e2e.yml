@@ -25,6 +25,17 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
 
+      - name: Free disk space on the runner
+        # The whole platform plus the inference model does not fit next to the preinstalled
+        # toolchains of ubuntu-latest (the first run died with "No space left on device").
+        run: |
+          set -eu
+          df -h / | tail -1
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup \
+            /opt/hostedtoolcache/CodeQL /usr/local/share/powershell /usr/share/swift
+          sudo docker image prune -af >/dev/null 2>&1 || true
+          df -h / | tail -1
+
       - name: Install pinned tools (helm and docker are on the runner)
         run: |
           set -eu

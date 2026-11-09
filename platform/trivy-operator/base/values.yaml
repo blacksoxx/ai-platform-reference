@@ -11,3 +11,16 @@ trivy:
 
 serviceMonitor:
   enabled: true
+
+# The operator runs as the image's non-root user with the restricted Pod Security profile;
+# the chart's defaults leave runAsNonRoot and the seccomp profile unset.
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+securityContext:
+  privileged: false
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
