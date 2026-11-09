@@ -40,6 +40,17 @@ else
 fi
 kubectl config use-context "$CONTEXT" >/dev/null
 
+echo "== 1b. gpu-probe image for the sample workloads, built here and loaded into the nodes"
+# workloads/gpu-probe/overlays/ci uses the :dev tag with imagePullPolicy IfNotPresent, so ci
+# never depends on a registry. Built for the architecture the kind nodes run on.
+case "$(docker info --format '{{.Architecture}}')" in
+  aarch64|arm64) PROBE_PLATFORM=linux/arm64 ;;
+  *) PROBE_PLATFORM=linux/amd64 ;;
+esac
+docker buildx build --platform "$PROBE_PLATFORM" --load \
+  -t ghcr.io/blacksoxx/ai-platform-reference/gpu-probe:dev "$ROOT/images/gpu-probe"
+kind load docker-image ghcr.io/blacksoxx/ai-platform-reference/gpu-probe:dev --name "$CLUSTER"
+
 echo "== 2. Gateway API CRDs $GATEWAY_API_VERSION (Cilium: 'The below CRDs from Gateway API v1.6.3 must be installed')"
 for crd in gatewayclasses gateways httproutes referencegrants grpcroutes backendtlspolicies tlsroutes; do
   kubectl apply --server-side -f "https://raw.githubusercontent.com/kubernetes-sigs/gateway-api/$GATEWAY_API_VERSION/config/crd/standard/gateway.networking.k8s.io_$crd.yaml"

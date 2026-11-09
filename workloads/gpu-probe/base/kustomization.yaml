@@ -1,0 +1,8 @@
+# gpu-probe: the smallest GPU workload. A Job that asks for one GPU, prints what the container
+# sees (architecture, nvidia-smi or the ROCm device nodes) and exits. Overlays choose the vendor
+# resource and the node; ci runs it on a simulated GPU, lab on the Spark or the Halo.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - job.yaml

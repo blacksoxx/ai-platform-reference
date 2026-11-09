@@ -1,0 +1,21 @@
+# Wave 4, a workload: the smallest GPU job, proving that nvidia.com/gpu is schedulable.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: workload-gpu-probe
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  project: default
+  source:
+    path: workloads/gpu-probe/overlays/ci
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: workloads
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
