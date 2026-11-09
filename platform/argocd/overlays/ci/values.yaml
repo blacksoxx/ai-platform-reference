@@ -5,8 +5,9 @@ global:
 
 configs:
   cm:
-    # Default is 180s; the e2e suite pushes a commit and expects the change within a minute.
-    timeout.reconciliation: 60s
+    # Default is 180s; a pushed commit is picked up within two minutes, which is short enough
+    # for the e2e loop and cheap enough for the application controller on a shared node.
+    timeout.reconciliation: 120s
   params:
     # One manifest generation at a time: rendering a dozen Helm charts in parallel on a small
     # node starved the repo-server's own health endpoint.

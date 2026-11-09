@@ -116,8 +116,8 @@ curl -k https://inference.172-18-255-10.nip.io/v1/chat/completions \
 
 ## Work on it
 
-The loop is: change a file, `make lint`, commit, push. Argo CD polls the repository every
-60 seconds in ci and applies the change; `make ci-status` shows it landing. There is no way to
+The loop is: change a file, `make lint`, commit, push. Argo CD polls the repository every two
+minutes in ci and applies the change; `make ci-status` shows it landing. There is no way to
 apply a local, uncommitted change through Argo CD, which is the point.
 
 To iterate on one component without waiting for Argo CD, render it and apply it directly, then

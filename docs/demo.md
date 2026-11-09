@@ -89,5 +89,5 @@ picked a backend. In the lab, the inference dashboard shows which vendor answere
 
 ## 9. Change something
 
-Edit a value, commit, push. Argo CD applies it within a minute; `make ci-status` shows the
+Edit a value, commit, push. Argo CD applies it within two minutes; `make ci-status` shows the
 Application go OutOfSync, Progressing, Healthy. Revert the commit to roll it back.

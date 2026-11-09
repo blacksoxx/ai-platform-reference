@@ -2,6 +2,9 @@
 prometheus:
   prometheusSpec:
     retention: 2d
+    # Half the default scrape rate: the kind nodes are shared by the whole platform.
+    scrapeInterval: 30s
+    evaluationInterval: 30s
     resources:
       requests:
         cpu: 200m

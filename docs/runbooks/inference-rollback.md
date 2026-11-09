@@ -19,7 +19,7 @@ git revert <commit>                                         # one revert commit,
 git push origin main
 ```
 
-Argo CD picks the revert up within a minute (`timeout.reconciliation: 60s` in ci) and
+Argo CD picks the revert up within two minutes (`timeout.reconciliation: 120s` in ci) and
 replaces the Deployment. Watch it:
 
 ```sh
