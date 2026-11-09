@@ -20,6 +20,7 @@ resources:
   # wave 2: needs External Secrets, the platform CA and the monitoring CRDs
   - kube-prometheus-stack.yaml
   - gateway.yaml
+  - inference.yaml
   - otel-collector.yaml
   - dashboards.yaml
   - alerts.yaml

@@ -1,0 +1,18 @@
+# Both backends expose Prometheus metrics on /metrics of their serving port: llama.cpp with
+# --metrics (llamacpp:* series), vLLM by default (vllm:* series). dashboards/inference and
+# alerts/inference.yaml are built on them.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: inference
+  namespace: inference
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: inference
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

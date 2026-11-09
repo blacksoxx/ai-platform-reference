@@ -1,0 +1,10 @@
+# Inference: one Service and one Gateway route in front of whichever backends an environment
+# runs. Every backend speaks the OpenAI API on port 8000 and serves the model under the alias
+# "ai-platform", so clients never see which vendor answered. ci runs llama.cpp on CPU; lab runs
+# vLLM on the NVIDIA node and llama.cpp (ROCm) on the AMD node behind the same Service.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - service.yaml
+  - servicemonitor.yaml

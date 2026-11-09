@@ -1,0 +1,7 @@
+# ci: a CPU backend, so that a completion request is answered end to end without a GPU.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: inference
+resources:
+  - ../../base
+  - deployment.yaml

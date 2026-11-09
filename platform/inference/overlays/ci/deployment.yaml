@@ -1,0 +1,98 @@
+# llama.cpp server on CPU with a small instruct model pulled from Hugging Face at start.
+# Flags are set through the LLAMA_ARG_* environment variables documented in the server README
+# (tools/server/README.md): LLAMA_ARG_HF_REPO ("Hugging Face model repository; quant is
+# optional"), LLAMA_ARG_HOST, LLAMA_ARG_PORT, LLAMA_ARG_ALIAS ("set model name aliases ... to be
+# used by API"), LLAMA_ARG_CTX_SIZE, LLAMA_ARG_THREADS, LLAMA_ARG_ENDPOINT_METRICS ("enable
+# prometheus compatible metrics endpoint"). GET /health "returns HTTP 503 ... while the model
+# loads" and 200 once ready, which is the readiness probe.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inference-cpu
+  namespace: inference
+  labels:
+    app.kubernetes.io/name: inference
+    app.kubernetes.io/component: cpu
+    app.kubernetes.io/part-of: ai-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: inference
+      app.kubernetes.io/component: cpu
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: inference
+        app.kubernetes.io/component: cpu
+        ai-platform.io/backend: llama.cpp-cpu
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: server
+          # ghcr.io/ggml-org/llama.cpp:server, multi-arch index pinned by digest on 2026-11-09.
+          image: ghcr.io/ggml-org/llama.cpp:server@sha256:30300ecfcb7ef05dc9413867dd7d03c9ce66eef00fec3576a6a15e9bf2b0bae7
+          env:
+            # Qwen/Qwen2.5-0.5B-Instruct-GGUF (Apache-2.0), q4_k_m, about 490 MB; repository
+            # revision bb5d59e06d95 on 2026-11-09.
+            - name: LLAMA_ARG_HF_REPO
+              value: Qwen/Qwen2.5-0.5B-Instruct-GGUF:Q4_K_M
+            - name: LLAMA_ARG_HOST
+              value: 0.0.0.0
+            - name: LLAMA_ARG_PORT
+              value: "8000"
+            - name: LLAMA_ARG_ALIAS
+              value: ai-platform
+            - name: LLAMA_ARG_CTX_SIZE
+              value: "2048"
+            - name: LLAMA_ARG_THREADS
+              value: "2"
+            - name: LLAMA_ARG_ENDPOINT_METRICS
+              value: "1"
+            - name: LLAMA_CACHE
+              value: /cache
+          ports:
+            - name: http
+              containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 90 # up to fifteen minutes for the first model download
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 900
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: cache
+              mountPath: /cache
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: cache
+          emptyDir:
+            sizeLimit: 2Gi
+        - name: tmp
+          emptyDir: {}

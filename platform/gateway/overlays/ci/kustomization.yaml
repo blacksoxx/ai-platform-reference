@@ -10,4 +10,5 @@ resources:
   - routes/argocd.yaml
   - routes/grafana.yaml
   - routes/hubble-ui.yaml
+  - routes/inference.yaml
   - routes/vault.yaml

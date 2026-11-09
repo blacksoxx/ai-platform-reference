@@ -1,0 +1,18 @@
+# The inference endpoint through the platform Gateway: one hostname, one Service, any backend.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: inference
+  namespace: inference
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  parentRefs:
+    - name: platform
+      namespace: platform-gateway
+  hostnames:
+    - inference.172-18-255-10.nip.io
+  rules:
+    - backendRefs:
+        - name: inference
+          port: 8000
