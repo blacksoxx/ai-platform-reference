@@ -1,0 +1,8 @@
+# lab: the operator runs on the control plane; scan jobs may run anywhere but never on GPU
+# nodes, which carry a vendor taint the jobs do not tolerate.
+nodeSelector:
+  node-role.kubernetes.io/control-plane: "true"
+tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule

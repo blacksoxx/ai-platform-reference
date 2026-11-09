@@ -1,0 +1,13 @@
+# Values for aqua/trivy-operator shared by every environment.
+# Chart: https://github.com/aquasecurity/trivy-operator/tree/main/deploy/helm (0.38.1, operator 0.36.1)
+operator:
+  # Two scan jobs at a time keeps the load predictable on small clusters.
+  scanJobsConcurrentLimit: 2
+  scanJobTimeout: 10m
+
+trivy:
+  # Findings without an available fix are noise for an operator; they stay out of the reports.
+  ignoreUnfixed: true
+
+serviceMonitor:
+  enabled: true

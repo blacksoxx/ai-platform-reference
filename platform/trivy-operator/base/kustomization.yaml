@@ -1,0 +1,6 @@
+# Trivy Operator: vulnerability, misconfiguration, RBAC and exposed-secret reports for every
+# workload in the cluster, as Kubernetes resources (VulnerabilityReport, ConfigAuditReport, ...).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
