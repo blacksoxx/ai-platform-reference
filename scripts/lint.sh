@@ -26,9 +26,9 @@ for kz in $(find clusters platform apps tenants workloads policies -name kustomi
   if ! rendered=$(kustomize build $KUSTOMIZE_FLAGS "$dir" 2>&1); then
     echo "FAIL  $dir (kustomize)"; echo "$rendered" | sed 's/^/      /' | head -20; fail=1; continue
   fi
-  if echo "$rendered" | kubeconform -strict -ignore-missing-schemas -kubernetes-version "$KUBERNETES_VERSION" \
+  if printf '%s\n' "$rendered" | kubeconform -strict -ignore-missing-schemas -kubernetes-version "$KUBERNETES_VERSION" \
       -schema-location default -schema-location "$CRD_SCHEMAS" -summary -output text >/tmp/kubeconform.out 2>&1; then
-    echo "ok    $dir  ($(grep -o 'Valid: [0-9]*' /tmp/kubeconform.out | head -1))"
+    echo "ok    $dir  ($(grep -oE 'Valid: [0-9]+, Invalid: [0-9]+, Errors: [0-9]+, Skipped: [0-9]+' /tmp/kubeconform.out | head -1))"
   else
     echo "FAIL  $dir (kubeconform)"; sed 's/^/      /' /tmp/kubeconform.out | head -20; fail=1
   fi
