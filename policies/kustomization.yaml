@@ -1,0 +1,14 @@
+# Admission policies: Kyverno ValidatingPolicy and ImageValidatingPolicy (the CEL-based types
+# that replace kyverno.io/v1 ClusterPolicy). They apply to tenant namespaces, selected by the
+# label ai-platform.io/tenant=true that the tenant package sets; platform namespaces are managed
+# from this repository and are not in scope.
+#
+# Tested offline with `kyverno test policies` (kyverno-test.yaml, part of `make lint`) and online
+# by scripts/e2e.d/4*-kyverno-*.sh against the ci cluster.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - disallow-privileged-containers.yaml
+  - require-labels.yaml
+  - restrict-image-registries.yaml
+  - verify-image-signatures.yaml

@@ -1,0 +1,63 @@
+# Offline tests for the validate policies, run by `kyverno test policies` in `make lint`.
+# The image-signature policy needs the registry and the transparency log and is proven online
+# instead (scripts/e2e.d/41-kyverno-unsigned-rejected.sh).
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: tenant-admission-policies
+policies:
+  - disallow-privileged-containers.yaml
+  - require-labels.yaml
+  - restrict-image-registries.yaml
+resources:
+  - test-resources.yaml
+variables: values.yaml
+results:
+  - policy: disallow-privileged-containers
+    kind: Pod
+    resources:
+      - privileged-pod
+    result: fail
+    isValidatingPolicy: true
+  - policy: disallow-privileged-containers
+    kind: Pod
+    resources:
+      - compliant-pod
+      - foreign-registry-pod
+      - unlabelled-pod
+    result: pass
+    isValidatingPolicy: true
+  - policy: require-labels
+    kind: Pod
+    resources:
+      - unlabelled-pod
+    result: fail
+    isValidatingPolicy: true
+  - policy: require-labels
+    kind: Pod
+    resources:
+      - compliant-pod
+      - privileged-pod
+      - foreign-registry-pod
+    result: pass
+    isValidatingPolicy: true
+  - policy: restrict-image-registries
+    kind: Pod
+    resources:
+      - foreign-registry-pod
+    result: fail
+    isValidatingPolicy: true
+  - policy: restrict-image-registries
+    kind: Pod
+    resources:
+      - compliant-pod
+      - privileged-pod
+      - unlabelled-pod
+    result: pass
+    isValidatingPolicy: true
+  - policy: disallow-privileged-containers
+    kind: Pod
+    resources:
+      - platform-namespace-pod
+    result: skip
+    isValidatingPolicy: true

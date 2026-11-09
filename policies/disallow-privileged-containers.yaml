@@ -1,0 +1,40 @@
+# Pod Security Standards, baseline: no privileged containers. A privileged container is the
+# host; everything else in this repository assumes it cannot happen.
+# Kyverno ValidatingPolicy (CEL), the successor of kyverno.io/v1 ClusterPolicy.
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: disallow-privileged-containers
+  annotations:
+    policies.kyverno.io/title: Disallow Privileged Containers
+    policies.kyverno.io/category: Pod Security Standards (Baseline)
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Privileged mode disables most security mechanisms and must not be allowed. Pods in tenant
+      namespaces may not set privileged on any container, init container or ephemeral container.
+spec:
+  evaluation:
+    background:
+      enabled: true
+  matchConstraints:
+    namespaceSelector:
+      matchLabels:
+        ai-platform.io/tenant: "true"
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+  validationActions: [Deny]
+  validations:
+    - expression: >-
+        object.spec.containers.all(c,
+          !has(c.securityContext) || !has(c.securityContext.privileged) || !c.securityContext.privileged)
+        && (!has(object.spec.initContainers) || object.spec.initContainers.all(c,
+          !has(c.securityContext) || !has(c.securityContext.privileged) || !c.securityContext.privileged))
+        && (!has(object.spec.ephemeralContainers) || object.spec.ephemeralContainers.all(c,
+          !has(c.securityContext) || !has(c.securityContext.privileged) || !c.securityContext.privileged))
+      message: >-
+        Privileged mode is disallowed. securityContext.privileged must be unset or false on every
+        container, init container and ephemeral container.

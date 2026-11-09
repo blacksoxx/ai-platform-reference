@@ -1,0 +1,34 @@
+# Every tenant Pod names its application. The label feeds the per-tenant dashboards, the KAI
+# queue views and the cost views; a Pod without it is invisible to all of them.
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: require-labels
+  annotations:
+    policies.kyverno.io/title: Require Labels
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod, Label
+    policies.kyverno.io/description: >-
+      The standard label app.kubernetes.io/name must be present on every Pod in a tenant
+      namespace, with a non-empty value, so that tooling and queries work consistently.
+spec:
+  evaluation:
+    background:
+      enabled: true
+  matchConstraints:
+    namespaceSelector:
+      matchLabels:
+        ai-platform.io/tenant: "true"
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+  validationActions: [Deny]
+  validations:
+    - expression: >-
+        has(object.metadata.labels)
+        && 'app.kubernetes.io/name' in object.metadata.labels
+        && object.metadata.labels['app.kubernetes.io/name'] != ''
+      message: The label app.kubernetes.io/name is required on every Pod.

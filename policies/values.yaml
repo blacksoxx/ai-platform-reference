@@ -1,0 +1,13 @@
+# Variables for kyverno-test.yaml: the namespace labels the policies' namespaceSelector reads.
+# team-a is a tenant namespace (policies apply), platform is not (policies skip).
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Values
+metadata:
+  name: tenant-namespaces
+namespaceSelector:
+  - name: team-a
+    labels:
+      ai-platform.io/tenant: "true"
+  - name: platform
+    labels:
+      app.kubernetes.io/part-of: ai-platform

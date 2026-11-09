@@ -1,0 +1,50 @@
+# Images from the platform registry must carry a Sigstore signature made by this repository's
+# image workflow: keyless signing with the GitHub Actions OIDC identity, recorded in the public
+# transparency log. Kyverno docs, ImageValidatingPolicy, "Cosign Keyless Signature and
+# Attestation Verification": attestors[].cosign.keyless.identities (subject, issuer) and ctlog.url,
+# verified in CEL with verifyImageSignatures(); validationConfigurations.mutateDigest "Mutates
+# image tags to digests (recommended to avoid mutable tags)".
+# https://kyverno.io/docs/policy-types/image-validating-policy/
+apiVersion: policies.kyverno.io/v1
+kind: ImageValidatingPolicy
+metadata:
+  name: verify-image-signatures
+  annotations:
+    policies.kyverno.io/title: Verify Image Signatures
+    policies.kyverno.io/category: Software Supply Chain Security
+    policies.kyverno.io/severity: high
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Pods in tenant namespaces may only run platform images that were signed by the images
+      workflow of github.com/blacksoxx/ai-platform-reference on its main branch.
+spec:
+  validationActions: [Deny]
+  failurePolicy: Fail
+  matchConstraints:
+    namespaceSelector:
+      matchLabels:
+        ai-platform.io/tenant: "true"
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+  matchImageReferences:
+    - glob: "ghcr.io/blacksoxx/ai-platform-reference/*"
+  validationConfigurations:
+    mutateDigest: true
+  attestors:
+    - name: githubActions
+      cosign:
+        keyless:
+          identities:
+            - subject: "https://github.com/blacksoxx/ai-platform-reference/.github/workflows/images.yml@refs/heads/main"
+              issuer: "https://token.actions.githubusercontent.com"
+        ctlog:
+          url: "https://rekor.sigstore.dev"
+  validations:
+    - expression: >-
+        images.containers.map(image, verifyImageSignatures(image, [attestors.githubActions])).all(e, e > 0)
+      message: >-
+        Image signature verification failed: platform images must be signed by the images
+        workflow of github.com/blacksoxx/ai-platform-reference (main).

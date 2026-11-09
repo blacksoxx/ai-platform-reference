@@ -1,0 +1,39 @@
+# Tenant images come from the platform registry or from the two vendors whose inference
+# runtimes the platform serves. Anything else is refused at admission.
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: restrict-image-registries
+  annotations:
+    policies.kyverno.io/title: Restrict Image Registries
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Images in tenant namespaces must come from ghcr.io/blacksoxx (built and signed by this
+      repository's CI), nvcr.io/nvidia (vLLM) or ghcr.io/ggml-org (llama.cpp).
+spec:
+  evaluation:
+    background:
+      enabled: true
+  matchConstraints:
+    namespaceSelector:
+      matchLabels:
+        ai-platform.io/tenant: "true"
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: [v1]
+        operations: [CREATE, UPDATE]
+        resources: [pods]
+  variables:
+    - name: allowed
+      expression: "['ghcr.io/blacksoxx/', 'nvcr.io/nvidia/', 'ghcr.io/ggml-org/']"
+  validationActions: [Deny]
+  validations:
+    - expression: >-
+        object.spec.containers.all(c, variables.allowed.exists(p, c.image.startsWith(p)))
+        && (!has(object.spec.initContainers)
+            || object.spec.initContainers.all(c, variables.allowed.exists(p, c.image.startsWith(p))))
+        && (!has(object.spec.ephemeralContainers)
+            || object.spec.ephemeralContainers.all(c, variables.allowed.exists(p, c.image.startsWith(p))))
+      message: Images must come from ghcr.io/blacksoxx/, nvcr.io/nvidia/ or ghcr.io/ggml-org/.
