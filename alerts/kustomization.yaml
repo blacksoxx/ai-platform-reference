@@ -6,3 +6,5 @@ namespace: monitoring
 resources:
   - gpu.yaml
   - inference.yaml
+  - scheduling.yaml
+  - security.yaml

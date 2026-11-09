@@ -1,0 +1,54 @@
+# Scheduling alerts, on kube-state-metrics with the KAI queue label exposed through the
+# metricLabelsAllowlist in platform/kube-prometheus-stack/base/values.yaml.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: scheduling
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/part-of: ai-platform
+spec:
+  groups:
+    - name: scheduling.queues
+      rules:
+        - alert: GPUJobPendingTooLong
+          # A Pod submitted to a KAI queue has been Pending for 15 minutes: the queue is at its
+          # limit, the cluster is out of GPUs, or the Pod asks for something no node has.
+          expr: |
+            (kube_pod_status_phase{phase="Pending"} == 1)
+              * on (namespace, pod) group_left (label_kai_scheduler_queue)
+            kube_pod_labels{label_kai_scheduler_queue!=""}
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "{{ $labels.namespace }}/{{ $labels.pod }} has waited 15 minutes in queue {{ $labels.label_kai_scheduler_queue }}"
+            description: >-
+              The Pod is Pending while assigned to KAI queue {{ $labels.label_kai_scheduler_queue }}.
+              Either the queue is at its limit and other teams hold the GPUs, or no node can satisfy
+              the request.
+            runbook_url: https://github.com/blacksoxx/ai-platform-reference/blob/main/docs/runbooks/gpu-job-pending-too-long.md
+
+        - alert: QueueStarvation
+          # A queue with Pending Pods for 30 minutes while GPUs are allocated but idle elsewhere:
+          # capacity is held, not used. Pairs with GPUAllocatedButIdle.
+          expr: |
+            (
+              count by (label_kai_scheduler_queue) (
+                (kube_pod_status_phase{phase="Pending"} == 1)
+                  * on (namespace, pod) group_left (label_kai_scheduler_queue)
+                kube_pod_labels{label_kai_scheduler_queue!=""}
+              ) > 0
+            )
+            and on ()
+            (count(DCGM_FI_DEV_GPU_UTIL{pod!=""} == 0) > 0)
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Queue {{ $labels.label_kai_scheduler_queue }} is starved while allocated GPUs sit idle"
+            description: >-
+              Pods in queue {{ $labels.label_kai_scheduler_queue }} have been waiting for 30 minutes
+              while at least one allocated GPU reports zero utilisation. Review the idle allocations
+              (GPUAllocatedButIdle) and the queue limits.
+            runbook_url: https://github.com/blacksoxx/ai-platform-reference/blob/main/docs/runbooks/gpu-job-pending-too-long.md

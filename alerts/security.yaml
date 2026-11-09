@@ -1,0 +1,31 @@
+# Security alerts, on Trivy Operator's metrics (docs, "Metrics": trivy_image_vulnerabilities
+# with labels namespace, name, image_repository, image_tag, severity, resource_kind,
+# resource_name). Falco events do not pass through Prometheus; Falcosidekick sends them to
+# Alertmanager directly.
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: security
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/part-of: ai-platform
+spec:
+  groups:
+    - name: security.vulnerabilities
+      rules:
+        - alert: TrivyCriticalVulnerabilities
+          # A running image with fixable critical vulnerabilities (the operator runs with
+          # ignoreUnfixed, so every count here has a fix available).
+          expr: |
+            sum by (namespace, resource_kind, resource_name, image_repository, image_tag)
+              (trivy_image_vulnerabilities{severity="Critical"}) > 0
+          for: 1h
+          labels:
+            severity: warning
+          annotations:
+            summary: "{{ $value }} critical vulnerabilities in {{ $labels.namespace }}/{{ $labels.resource_name }}"
+            description: >-
+              {{ $labels.image_repository }}:{{ $labels.image_tag }} used by {{ $labels.resource_kind }}
+              {{ $labels.resource_name }} carries {{ $value }} critical vulnerabilities with a fix
+              available. Rebuild or bump the image.
+            runbook_url: https://github.com/blacksoxx/ai-platform-reference/blob/main/docs/runbooks/trivy-critical-vulnerabilities.md

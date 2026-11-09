@@ -225,13 +225,16 @@ seeded in Vault, never written in Git.
   Probe in the cluster; components ship their own. The Prometheus Operator CRDs are installed
   one wave before anything else for that reason.
 - **Dashboards** are ConfigMaps labelled `grafana_dashboard=1` with a `grafana_folder`
-  annotation, loaded by Grafana's sidecar: NVIDIA's DCGM dashboard (GPU folder) and the
-  inference dashboard (requests in flight and queued, tokens per second and queue depth per
-  backend, vLLM latency quantiles and KV cache usage).
+  annotation, loaded by Grafana's sidecar: NVIDIA's DCGM dashboard and the GPU queues
+  dashboard (GPU folder: capacity versus requests, Pods running and waiting per KAI queue,
+  requests per namespace, utilisation per node), and the inference dashboard (requests in
+  flight and queued, tokens per second and queue depth per backend, vLLM latency quantiles and
+  KV cache usage). kube-state-metrics exposes the KAI queue label on Pods for the queue views.
 - **Alerts** are PrometheusRules in `alerts/`; each carries a `runbook_url` into
   [runbooks/](runbooks/). GPU: node not ready, XID error, temperature, allocated but idle.
-  Inference: no backend, backend down, latency, queued requests. Falco events arrive in the
-  same Alertmanager through Falcosidekick.
+  Scheduling: a queued job Pending too long, queue starvation while GPUs idle. Inference: no
+  backend, backend down, latency, queued requests. Security: critical vulnerabilities with a
+  fix. Falco events arrive in the same Alertmanager through Falcosidekick.
 - **OpenTelemetry Collector** accepts OTLP (gRPC and HTTP) from workloads, re-exposes metrics
   to Prometheus and keeps traces and logs on the debug exporter until a tracing backend is
   added.

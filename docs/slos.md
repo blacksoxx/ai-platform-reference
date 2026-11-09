@@ -21,7 +21,7 @@ Error budget: 0.5 % of requests over 30 days. Spending it on a planned rollout i
 
 | Objective | Target | Indicator | Guarding alert |
 |---|---|---|---|
-| Queue wait: a job within its queue's guaranteed quota starts | within 5 minutes, 99 % of the time | time between Pod creation and `PodScheduled=True` for Pods labelled `kai.scheduler/queue`, from kube-state-metrics (`kube_pod_status_scheduled_time - kube_pod_created`) | none yet: a queue-starvation rule is the next alert to add |
+| Queue wait: a job within its queue's guaranteed quota starts | within 5 minutes, 99 % of the time | time between Pod creation and `PodScheduled=True` for Pods labelled `kai.scheduler/queue`, from kube-state-metrics (`kube_pod_status_scheduled_time - kube_pod_created`) | GPUJobPendingTooLong (15 minutes Pending), QueueStarvation (waiting while allocated GPUs idle) |
 | GPU availability: every GPU node is Ready | 99 % of the time | `kube_node_status_condition{condition="Ready",status="true"}` on nodes with GPU capacity | GPUNodeNotReady |
 | GPU health: no unresolved XID error | zero for longer than 15 minutes | `DCGM_FI_DEV_XID_ERRORS` | GPUXidError |
 

@@ -42,6 +42,13 @@ prometheus:
     probeSelectorNilUsesHelmValues: false
     scrapeConfigSelectorNilUsesHelmValues: false
 
+# kube-state-metrics subchart: expose the KAI queue label and the application name of Pods as
+# metric labels (kube_pod_labels), which the queue dashboard and the GPUJobPendingTooLong alert
+# join on. Only these two labels, for the sake of cardinality.
+kube-state-metrics:
+  metricLabelsAllowlist:
+    - pods=[kai.scheduler/queue,app.kubernetes.io/name]
+
 grafana:
   admin:
     # Written by the ExternalSecret in this directory.

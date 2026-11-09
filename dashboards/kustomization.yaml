@@ -28,3 +28,11 @@ configMapGenerator:
         grafana_folder: Inference
     files:
       - inference/inference.json
+  # scheduling/queues.json: GPUs in the cluster and requested, Pods running and waiting per KAI
+  # queue, GPU requests per namespace, utilisation per node.
+  - name: dashboard-gpu-queues
+    options:
+      annotations:
+        grafana_folder: GPU
+    files:
+      - scheduling/queues.json
