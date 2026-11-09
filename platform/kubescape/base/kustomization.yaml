@@ -1,0 +1,6 @@
+# Kubescape operator: posture and compliance scans (NSA, MITRE, CIS frameworks) and image
+# vulnerability scans, with results as Kubernetes resources and Prometheus metrics.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml

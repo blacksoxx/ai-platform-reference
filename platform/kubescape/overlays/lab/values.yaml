@@ -1,0 +1,12 @@
+# lab: cluster name for the reports. The node agent runs on every node, including GPU nodes,
+# so it tolerates the vendor taint through the chart's node agent settings.
+clusterName: ai-platform-lab
+
+nodeAgent:
+  tolerations:
+    - key: ai-platform.io/gpu
+      operator: Exists
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule

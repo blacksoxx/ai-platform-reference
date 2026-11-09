@@ -1,0 +1,24 @@
+# Values for kubescape/kubescape-operator shared by every environment.
+# Chart: https://github.com/kubescape/helm-charts/tree/main/charts/kubescape-operator (1.42.0)
+#
+# Capabilities are trimmed to what this platform uses: configuration (posture) scans, node scans
+# for the CIS checks, image vulnerability scans with SBOMs, and Prometheus metrics. Runtime
+# observability and the admission controller stay off: Falco covers runtime detection and
+# Kyverno admission, and the eBPF node agent features cost memory on small nodes.
+capabilities:
+  configurationScan: enable
+  continuousScan: disable
+  nodeScan: enable
+  nodeSbomGeneration: enable
+  vulnerabilityScan: enable
+  relevancy: disable
+  runtimeObservability: disable
+  networkPolicyService: disable
+  networkEventsStreaming: disable
+  runtimeDetection: disable
+  malwareDetection: disable
+  nodeProfileService: disable
+  admissionController: disable
+  httpDetection: disable
+  seccompProfileService: disable
+  prometheusExporter: enable
