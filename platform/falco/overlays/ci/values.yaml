@@ -1,9 +1,10 @@
-# ci: small requests on a kind cluster.
+# ci: small requests on a kind cluster, and a CPU cap so the probe cannot starve the nodes.
 resources:
   requests:
     cpu: 100m
     memory: 256Mi
   limits:
+    cpu: 500m
     memory: 1Gi
 falcosidekick:
   resources:
