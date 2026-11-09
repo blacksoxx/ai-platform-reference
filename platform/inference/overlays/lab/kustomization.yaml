@@ -1,0 +1,9 @@
+# lab: two GPU backends behind the one Service, vLLM on the NVIDIA node and llama.cpp (ROCm) on
+# the AMD node, both serving Qwen2.5-7B-Instruct as the model alias "ai-platform".
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: inference
+resources:
+  - ../../base
+  - vllm-nvidia.yaml
+  - llamacpp-amd.yaml

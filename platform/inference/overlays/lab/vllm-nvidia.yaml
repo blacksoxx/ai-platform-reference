@@ -1,0 +1,93 @@
+# vLLM on the DGX Spark. NVIDIA's vLLM container is built for the GB10 (CUDA 13, arm64);
+# nvcr.io/nvidia/vllm:26.10-py3 has linux/amd64 and linux/arm64 variants (checked 2026-11-09).
+# `vllm serve` exposes the OpenAI API on --port, /health for probes and /metrics for Prometheus.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inference-nvidia
+  namespace: inference
+  labels:
+    app.kubernetes.io/name: inference
+    app.kubernetes.io/component: nvidia
+    app.kubernetes.io/part-of: ai-platform
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate # one GPU, one server at a time
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: inference
+      app.kubernetes.io/component: nvidia
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: inference
+        app.kubernetes.io/component: nvidia
+        ai-platform.io/backend: vllm-nvidia
+    spec:
+      nodeSelector:
+        ai-platform.io/gpu: nvidia
+      tolerations:
+        - key: ai-platform.io/gpu
+          operator: Equal
+          value: nvidia
+          effect: NoSchedule
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: vllm
+          image: nvcr.io/nvidia/vllm:26.10-py3@sha256:0a0de9362545e3e062750bec4ad4f722422a04a81182b5258a7deda4325e9313
+          command:
+            - vllm
+            - serve
+            - Qwen/Qwen2.5-7B-Instruct
+            - --served-model-name=ai-platform
+            - --host=0.0.0.0
+            - --port=8000
+            - --max-model-len=8192
+          env:
+            - name: HF_HOME
+              value: /cache
+          ports:
+            - name: http
+              containerPort: 8000
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 15
+            failureThreshold: 120 # up to thirty minutes for the first weight download
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "2"
+              memory: 24Gi
+            limits:
+              memory: 48Gi
+              nvidia.com/gpu: 1
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+          volumeMounts:
+            - name: cache
+              mountPath: /cache
+            - name: shm
+              mountPath: /dev/shm
+      volumes:
+        - name: cache
+          emptyDir:
+            sizeLimit: 60Gi
+        - name: shm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 8Gi

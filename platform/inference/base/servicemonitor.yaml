@@ -12,6 +12,10 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: inference
+  # The backend's component label (cpu, nvidia, amd) travels with every series, so dashboards
+  # and alerts can tell the vendors apart: metric label app_kubernetes_io_component.
+  podTargetLabels:
+    - app.kubernetes.io/component
   endpoints:
     - port: http
       path: /metrics
