@@ -1,4 +1,4 @@
-# Argo CD's UI and API through the platform Gateway. The server runs with server.insecure, so
+# Argo CD UI and API. The server runs with server.insecure, so
 # the Gateway terminates TLS and talks plain HTTP to the Service's port 80.
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute

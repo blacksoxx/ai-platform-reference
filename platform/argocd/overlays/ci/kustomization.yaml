@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: argocd
 resources:
   - ../../base
-  - httproute.yaml
 helmCharts:
   - name: argo-cd
     repo: https://argoproj.github.io/argo-helm

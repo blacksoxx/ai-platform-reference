@@ -4,7 +4,6 @@ namespace: vault
 resources:
   - ../../base
   - configure-job.yaml
-  - httproute.yaml
 helmCharts:
   - name: vault
     repo: https://helm.releases.hashicorp.com

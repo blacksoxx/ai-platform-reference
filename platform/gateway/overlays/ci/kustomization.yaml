@@ -1,7 +1,13 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: platform-gateway
 resources:
   - ../../base
   - certificate.yaml
   - gateway.yaml
+  # Every HTTPRoute lives here, next to the Gateway it attaches to, whatever namespace it is in.
+  # A route is only Healthy once a Gateway has accepted it, so routes kept in earlier sync waves
+  # would hold those waves back forever.
+  - routes/argocd.yaml
+  - routes/grafana.yaml
+  - routes/hubble-ui.yaml
+  - routes/vault.yaml
