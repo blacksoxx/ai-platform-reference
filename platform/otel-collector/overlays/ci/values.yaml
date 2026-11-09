@@ -1,0 +1,7 @@
+# ci: small requests for a kind cluster.
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    memory: 512Mi

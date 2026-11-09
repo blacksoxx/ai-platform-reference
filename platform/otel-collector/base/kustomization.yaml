@@ -1,0 +1,7 @@
+# OpenTelemetry Collector: the OTLP front door for traces, metrics and logs emitted by workloads
+# (vLLM and llama.cpp speak OTLP). Metrics are re-exposed to Prometheus; traces and logs go to
+# the debug exporter until a tracing backend is part of the platform.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml

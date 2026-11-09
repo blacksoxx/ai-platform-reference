@@ -1,0 +1,74 @@
+# Values for open-telemetry/opentelemetry-collector shared by every environment.
+# Chart README: "the mode value needs to be set to one of daemonset, deployment or statefulset".
+# The contrib distribution is used because the k8s distribution has no Prometheus exporter
+# (checked in distributions/otelcol-k8s/manifest.yaml of opentelemetry-collector-releases).
+mode: deployment
+replicaCount: 1
+
+image:
+  repository: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib
+command:
+  name: otelcol-contrib
+
+# The chart's default config has OTLP, Jaeger, Zipkin and a self-scrape receiver with every
+# pipeline ending in the debug exporter. Maps merge with the defaults and null removes a key;
+# "lists in helm are not merged, so if you want to modify any default list you must specify
+# all items", hence the full pipelines below.
+config:
+  receivers:
+    jaeger: null
+    zipkin: null
+    prometheus: null
+  exporters:
+    debug: {}
+    prometheus:
+      endpoint: ${env:MY_POD_IP}:8889
+  service:
+    pipelines:
+      traces:
+        receivers: [otlp]
+        processors: [memory_limiter, batch]
+        exporters: [debug]
+      metrics:
+        receivers: [otlp]
+        processors: [memory_limiter, batch]
+        exporters: [prometheus]
+      logs:
+        receivers: [otlp]
+        processors: [memory_limiter, batch]
+        exporters: [debug]
+
+ports:
+  jaeger-compact:
+    enabled: false
+  jaeger-thrift:
+    enabled: false
+  jaeger-grpc:
+    enabled: false
+  zipkin:
+    enabled: false
+  # The collector's own telemetry (8888) and the Prometheus exporter (8889), both scraped.
+  metrics:
+    enabled: true
+  prom-exporter:
+    enabled: true
+    containerPort: 8889
+    servicePort: 8889
+    protocol: TCP
+
+serviceMonitor:
+  enabled: true
+  metricsEndpoints:
+    - port: metrics
+    - port: prom-exporter
+
+# Pod Security Standards "restricted".
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
