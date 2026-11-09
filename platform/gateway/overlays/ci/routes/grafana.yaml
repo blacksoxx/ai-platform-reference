@@ -7,6 +7,7 @@ metadata:
   namespace: monitoring
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "2" # after the Gateway (wave 1) that must accept the route
 spec:
   parentRefs:
     - name: platform
