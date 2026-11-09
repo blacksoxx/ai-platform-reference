@@ -1,0 +1,7 @@
+# KAI Scheduler: queues with quotas, fair share and gang scheduling for GPU workloads. Tenants
+# get a leaf queue each (tenants/base/kai-queue.yaml) under the default parent queue the chart
+# creates; workloads opt in with schedulerName kai-scheduler and the kai.scheduler/queue label.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml

@@ -1,0 +1,3 @@
+# ci: nothing beyond the shared values; the chart's defaults fit a kind cluster.
+global:
+  leaderElection: false

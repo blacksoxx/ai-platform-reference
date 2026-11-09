@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kai-scheduler
+resources:
+  - ../../base
+helmCharts:
+  - name: kai-scheduler
+    repo: oci://ghcr.io/kai-scheduler/kai-scheduler
+    version: v0.18.7 # checked 2026-11-09
+    releaseName: kai-scheduler
+    namespace: kai-scheduler
+    includeCRDs: true
+    valuesFile: ../../base/values.yaml
+    additionalValuesFiles:
+      - values.yaml

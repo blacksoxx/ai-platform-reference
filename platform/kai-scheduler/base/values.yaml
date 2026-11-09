@@ -1,0 +1,13 @@
+# Values for the kai-scheduler chart shared by every environment.
+# Chart: oci://ghcr.io/kai-scheduler/kai-scheduler/kai-scheduler (README: helm upgrade -i
+# kai-scheduler oci://ghcr.io/kai-scheduler/kai-scheduler/kai-scheduler -n kai-scheduler ...)
+# https://github.com/kai-scheduler/KAI-Scheduler
+
+# The chart creates default-parent-queue and default-queue; tenant queues hang under the parent
+# (tenants/base/kai-queue.yaml) and are the only leaf queues workloads are meant to use.
+defaultQueue:
+  createDefaultQueue: true
+
+# ServiceMonitors for the scheduler components (CRD from platform/prometheus-operator-crds).
+prometheus:
+  enabled: true

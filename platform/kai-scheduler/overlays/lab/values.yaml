@@ -1,0 +1,13 @@
+# lab: scheduler components on the control plane, never on a GPU node.
+global:
+  leaderElection: false
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: "true"
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+  daemonsetsTolerations:
+    - key: ai-platform.io/gpu
+      operator: Exists
+      effect: NoSchedule
