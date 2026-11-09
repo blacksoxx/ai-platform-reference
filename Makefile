@@ -11,7 +11,7 @@ IMAGE_PREFIX    ?= ghcr.io/blacksoxx/ai-platform-reference
 IMAGE_TAG       ?= dev
 GPU_PROBE_IMAGE := $(IMAGE_PREFIX)/gpu-probe:$(IMAGE_TAG)
 
-.PHONY: help lint test ci-up ci-down ci-status e2e image-gpu-probe test-gpu-probe
+.PHONY: help lint test ci-up ci-down ci-status e2e demo lab-bootstrap image-gpu-probe test-gpu-probe
 
 help: ## list targets
 	@grep -E '^[a-zA-Z0-9_-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "} {printf "  %-18s %s\n", $$1, $$2}'
@@ -32,6 +32,12 @@ ci-status: ## sync and health of every Argo CD Application
 
 e2e: ## wait until every Application is Healthy, then run the proofs
 	scripts/e2e.sh
+
+demo: ## run the proofs in demo order against a running environment (docs/demo.md)
+	scripts/demo.sh
+
+lab-bootstrap: ## how to bootstrap the lab cluster, one role at a time (docs/setup-lab.md)
+	@clusters/lab/bootstrap.sh || true
 
 image-gpu-probe: ## build images/gpu-probe for arm64 and amd64 into the local image store
 	docker buildx build --platform $(PLATFORMS) --load -t $(GPU_PROBE_IMAGE) images/gpu-probe
