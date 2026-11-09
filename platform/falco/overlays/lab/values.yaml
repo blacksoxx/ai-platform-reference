@@ -1,0 +1,15 @@
+# lab: Falco runs on every node, GPU nodes included, so it tolerates the vendor taint.
+tolerations:
+  - key: ai-platform.io/gpu
+    operator: Exists
+    effect: NoSchedule
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+falcosidekick:
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: "true"
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule

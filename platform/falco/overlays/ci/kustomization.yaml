@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: falco
+resources:
+  - ../../base
+helmCharts:
+  - name: falco
+    repo: https://falcosecurity.github.io/charts
+    version: 9.2.2 # Falco 0.45.2, checked 2026-11-09
+    releaseName: falco
+    namespace: falco
+    includeCRDs: true
+    valuesFile: ../../base/values.yaml
+    additionalValuesFiles:
+      - values.yaml

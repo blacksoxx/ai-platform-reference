@@ -1,0 +1,6 @@
+# Falco: runtime threat detection from kernel events (modern eBPF probe). Alerts go through
+# Falcosidekick to the platform Alertmanager, next to the Prometheus alerts.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml

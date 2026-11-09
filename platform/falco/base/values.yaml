@@ -1,0 +1,31 @@
+# Values for falcosecurity/falco shared by every environment.
+# Chart: https://github.com/falcosecurity/charts/tree/master/charts/falco (9.2.2, Falco 0.45.2)
+
+# "kind tells Falco which driver to use. Available options: kmod (kernel driver), modern_ebpf
+# (modern eBPF probe)." The modern probe is built into the Falco binary (CO-RE) and needs no
+# kernel headers or module build on the nodes.
+driver:
+  enabled: true
+  kind: modern_ebpf
+
+falco:
+  json_output: true
+  json_include_output_property: true
+
+# Falcosidekick forwards every event at or above "notice" (the priority of the default shell
+# detection rules) to Alertmanager, so Falco alerts show up next to the Prometheus ones.
+# Subchart values: config.alertmanager.hostport, config.alertmanager.minimumpriority.
+falcosidekick:
+  enabled: true
+  replicaCount: 1
+  config:
+    alertmanager:
+      hostport: http://monitoring-alertmanager.monitoring.svc:9093
+      minimumpriority: notice
+  serviceMonitor:
+    enabled: true
+
+metrics:
+  enabled: true
+serviceMonitor:
+  enabled: true

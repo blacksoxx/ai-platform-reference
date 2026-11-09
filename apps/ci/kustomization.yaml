@@ -13,14 +13,20 @@ resources:
   - cert-manager.yaml
   - vault.yaml
   - fake-gpu-operator.yaml
+  - kyverno.yaml
   # wave 1: needs Vault configured
   - external-secrets.yaml
-  # wave 2: needs External Secrets and the platform CA
+  # wave 2: needs External Secrets, the platform CA and the monitoring CRDs
   - kube-prometheus-stack.yaml
   - gateway.yaml
   - otel-collector.yaml
   - dashboards.yaml
   - alerts.yaml
+  - trivy-operator.yaml
+  - kubescape.yaml
+  - falco.yaml
+  # wave 3: policies, once the engine is up
+  - policies.yaml
   # wave 4: workloads
   - workload-gpu-probe.yaml
 patches:
