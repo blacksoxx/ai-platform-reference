@@ -1,0 +1,8 @@
+# kube-prometheus-stack: Prometheus, Alertmanager, Grafana and the exporters, as one chart. The
+# CRDs are installed separately one wave earlier (platform/prometheus-operator-crds). The
+# Grafana admin credentials come from Vault through an ExternalSecret.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - grafana-admin-externalsecret.yaml

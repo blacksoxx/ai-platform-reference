@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+  labels:
+    app.kubernetes.io/part-of: ai-platform
+    # node-exporter needs host namespaces and host paths, which the restricted and baseline
+    # profiles forbid; it is the one exception, so this namespace only warns.
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/warn: restricted

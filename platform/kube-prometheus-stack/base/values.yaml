@@ -1,0 +1,56 @@
+# Values for prometheus-community/kube-prometheus-stack shared by every environment.
+# Chart: https://github.com/prometheus-community/helm-charts/tree/main/charts/kube-prometheus-stack
+fullnameOverride: monitoring
+
+crds:
+  # Installed one wave earlier by platform/prometheus-operator-crds, same operator version.
+  enabled: false
+
+# Control-plane components bind to localhost on both kind and RKE2 and cannot be scraped from
+# the pod network; kube-proxy is replaced by Cilium. Their scrape targets and the alert rules
+# that would fire for them are disabled instead of left red.
+kubeEtcd:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+defaultRules:
+  rules:
+    etcd: false
+    kubeControllerManager: false
+    kubeSchedulerAlerting: false
+    kubeSchedulerRecording: false
+    kubeProxy: false
+
+prometheus:
+  prometheusSpec:
+    # Pick up every ServiceMonitor, PodMonitor, PrometheusRule and Probe in the cluster, not only
+    # the ones carrying this release's label (the chart's default behaviour).
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    scrapeConfigSelectorNilUsesHelmValues: false
+
+grafana:
+  admin:
+    # Written by the ExternalSecret in this directory.
+    existingSecret: grafana-admin
+    userKey: admin-user
+    passwordKey: admin-password
+  sidecar:
+    dashboards:
+      # Every ConfigMap labelled grafana_dashboard=1 anywhere in the cluster becomes a dashboard;
+      # dashboards/ ships them with a grafana_folder annotation.
+      enabled: true
+      label: grafana_dashboard
+      labelValue: "1"
+      searchNamespace: ALL
+      folderAnnotation: grafana_folder
+      provider:
+        foldersFromFilesStructure: true
+  serviceMonitor:
+    enabled: true
