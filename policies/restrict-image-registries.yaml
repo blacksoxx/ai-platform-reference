@@ -11,7 +11,8 @@ metadata:
     policies.kyverno.io/subject: Pod
     policies.kyverno.io/description: >-
       Images in tenant namespaces must come from ghcr.io/blacksoxx (built and signed by this
-      repository's CI), nvcr.io/nvidia (vLLM) or ghcr.io/ggml-org (llama.cpp).
+      repository's CI), nvcr.io/nvidia (vLLM), ghcr.io/ggml-org (llama.cpp) or ghcr.io/loft-sh
+      (the tenant's vCluster control plane, which runs in the tenant namespace).
 spec:
   evaluation:
     background:
@@ -27,7 +28,7 @@ spec:
         resources: [pods]
   variables:
     - name: allowed
-      expression: "['ghcr.io/blacksoxx/', 'nvcr.io/nvidia/', 'ghcr.io/ggml-org/']"
+      expression: "['ghcr.io/blacksoxx/', 'nvcr.io/nvidia/', 'ghcr.io/ggml-org/', 'ghcr.io/loft-sh/']"
   validationActions: [Deny]
   validations:
     - expression: >-
@@ -36,4 +37,4 @@ spec:
             || object.spec.initContainers.all(c, variables.allowed.exists(p, c.image.startsWith(p))))
         && (!has(object.spec.ephemeralContainers)
             || object.spec.ephemeralContainers.all(c, variables.allowed.exists(p, c.image.startsWith(p))))
-      message: Images must come from ghcr.io/blacksoxx/, nvcr.io/nvidia/ or ghcr.io/ggml-org/.
+      message: Images must come from ghcr.io/blacksoxx/, nvcr.io/nvidia/, ghcr.io/ggml-org/ or ghcr.io/loft-sh/.

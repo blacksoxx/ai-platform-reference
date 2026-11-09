@@ -14,6 +14,7 @@ resources:
   - vault.yaml
   - fake-gpu-operator.yaml
   - kyverno.yaml
+  - kai-scheduler.yaml
   # wave 1: needs Vault configured
   - external-secrets.yaml
   # wave 2: needs External Secrets, the platform CA and the monitoring CRDs
@@ -27,8 +28,11 @@ resources:
   - falco.yaml
   # wave 3: policies, once the engine is up
   - policies.yaml
-  # wave 4: workloads
+  # wave 4: tenants (an ApplicationSet) and platform workloads
+  - tenants.yaml
   - workload-gpu-probe.yaml
+  # wave 5: tenant workloads
+  - workload-interactive-session.yaml
 patches:
   # Every Application tracks this repository and branch; set once here instead of in each file.
   - target:

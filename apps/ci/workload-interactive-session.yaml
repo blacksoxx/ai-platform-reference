@@ -1,0 +1,20 @@
+# Wave 5: a tenant workload, after the tenant namespaces and queues exist.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: workload-interactive-session
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
+spec:
+  project: default
+  source:
+    path: workloads/interactive-session
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: team-a
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true

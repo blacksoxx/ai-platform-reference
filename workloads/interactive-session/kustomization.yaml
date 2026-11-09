@@ -1,0 +1,8 @@
+# interactive-session: a long-running, notebook-style GPU allocation for team-a. It holds one
+# GPU through the team's KAI queue and does nothing, which is exactly what a forgotten notebook
+# does; the GPUAllocatedButIdle alert is written for it.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: team-a
+resources:
+  - deployment.yaml

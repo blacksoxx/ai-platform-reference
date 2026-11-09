@@ -1,0 +1,48 @@
+# A tenant workload as tenants write them: the required label, the team's queue, the KAI
+# scheduler, one GPU, a signed platform image, restricted security context.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: interactive-session
+  namespace: team-a
+  labels:
+    app.kubernetes.io/name: interactive-session
+    app.kubernetes.io/part-of: ai-platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: interactive-session
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: interactive-session
+        # KAI quick start: "Specify the queue name using the kai.scheduler/queue: <queue> label on
+        # the pod/workload" and "Set the scheduler name in the pod specification as kai-scheduler".
+        kai.scheduler/queue: team-a
+    spec:
+      schedulerName: kai-scheduler
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      tolerations:
+        - key: ai-platform.io/gpu
+          operator: Exists
+          effect: NoSchedule
+      containers:
+        - name: session
+          image: ghcr.io/blacksoxx/ai-platform-reference/gpu-probe:main
+          command: ["/bin/sh", "-c", "/usr/local/bin/gpu-probe; exec sleep infinity"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
+              nvidia.com/gpu: 1
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
