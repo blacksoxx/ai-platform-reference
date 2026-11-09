@@ -1,4 +1,4 @@
-# ci: one replica per controller, small requests.
+# ci: one replica per controller, small requests, hard CPU caps on the shared kind nodes.
 admissionController:
   replicas: 1
   container:
@@ -7,6 +7,7 @@ admissionController:
         cpu: 50m
         memory: 128Mi
       limits:
+        cpu: 300m
         memory: 512Mi
 backgroundController:
   replicas: 1
@@ -15,6 +16,7 @@ backgroundController:
       cpu: 20m
       memory: 64Mi
     limits:
+      cpu: 200m
       memory: 256Mi
 cleanupController:
   replicas: 1
@@ -23,6 +25,7 @@ cleanupController:
       cpu: 20m
       memory: 64Mi
     limits:
+      cpu: 200m
       memory: 256Mi
 reportsController:
   replicas: 1
@@ -31,4 +34,5 @@ reportsController:
       cpu: 20m
       memory: 64Mi
     limits:
+      cpu: 200m
       memory: 256Mi

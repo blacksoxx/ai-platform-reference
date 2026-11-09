@@ -1,4 +1,7 @@
-# ci: small requests on a kind cluster, and a CPU cap so the probe cannot starve the nodes.
+# ci: small requests on a kind cluster, a CPU cap so the probe cannot starve the nodes, and
+# workers only: the control-plane node keeps its CPU for the API server and the controllers.
+nodeSelector:
+  ai-platform.io/gpu: nvidia
 resources:
   requests:
     cpu: 100m

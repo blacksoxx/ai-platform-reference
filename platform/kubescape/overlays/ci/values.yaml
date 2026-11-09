@@ -1,6 +1,7 @@
-# ci: cluster name for the reports and small requests on a kind cluster. The posture scan is
-# what the ci proof checks; image vulnerability scanning (Trivy covers it) and the node scan
-# stay off here because their first run saturated the shared kind nodes.
+# ci: cluster name for the reports, small requests and hard CPU caps on a kind cluster whose
+# nodes are shared by the whole platform. The posture scan is what the ci proof checks; image
+# vulnerability scanning (Trivy covers it) and the node scan stay off here because their first
+# run saturated the nodes. The node agent stays off the control-plane node.
 clusterName: ai-platform-ci
 
 capabilities:
@@ -14,6 +15,7 @@ kubescape:
       cpu: 100m
       memory: 256Mi
     limits:
+      cpu: 300m
       memory: 1Gi
 kubevuln:
   resources:
@@ -21,13 +23,17 @@ kubevuln:
       cpu: 100m
       memory: 512Mi
     limits:
+      cpu: 300m
       memory: 2Gi
 nodeAgent:
+  nodeSelector:
+    ai-platform.io/gpu: nvidia
   resources:
     requests:
       cpu: 50m
       memory: 128Mi
     limits:
+      cpu: 300m
       memory: 512Mi
 operator:
   resources:
@@ -35,6 +41,7 @@ operator:
       cpu: 50m
       memory: 128Mi
     limits:
+      cpu: 300m
       memory: 512Mi
 storage:
   resources:
@@ -42,4 +49,5 @@ storage:
       cpu: 50m
       memory: 256Mi
     limits:
+      cpu: 300m
       memory: 1Gi

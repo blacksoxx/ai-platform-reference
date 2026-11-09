@@ -1,5 +1,6 @@
 # ci: a kind cluster on a laptop or a GitHub runner. One replica of everything, small requests,
-# and short reconciliation so end-to-end tests do not wait on timers.
+# hard CPU caps (the nodes are shared by the whole platform) and probes that tolerate a busy
+# node.
 global:
   domain: argocd.ci.ai-platform.local
 
@@ -19,6 +20,7 @@ controller:
       cpu: 250m
       memory: 512Mi
     limits:
+      cpu: 500m
       memory: 1Gi
 
 repoServer:
@@ -27,6 +29,7 @@ repoServer:
       cpu: 250m
       memory: 256Mi
     limits:
+      cpu: 500m
       memory: 1Gi
   # A kind node shared by the whole platform is slow while scanners and model downloads run;
   # the chart's one-second probe timeout killed a healthy repo-server every few minutes.
@@ -45,6 +48,7 @@ server:
       cpu: 50m
       memory: 128Mi
     limits:
+      cpu: 300m
       memory: 512Mi
 
 applicationSet:
@@ -53,6 +57,7 @@ applicationSet:
       cpu: 50m
       memory: 128Mi
     limits:
+      cpu: 200m
       memory: 256Mi
 
 redis:
@@ -61,4 +66,5 @@ redis:
       cpu: 50m
       memory: 64Mi
     limits:
+      cpu: 200m
       memory: 256Mi
