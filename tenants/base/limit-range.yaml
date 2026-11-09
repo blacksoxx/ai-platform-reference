@@ -1,0 +1,17 @@
+# Defaults for Pods that do not state requests and limits, so the quota always has numbers to
+# count and the scheduler always has numbers to place.
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: tenant
+  namespace: tenant
+spec:
+  limits:
+    - type: Container
+      defaultRequest:
+        cpu: 100m
+        memory: 128Mi
+      default:
+        memory: 512Mi
+      max:
+        memory: 32Gi

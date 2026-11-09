@@ -1,0 +1,29 @@
+# The team's KAI queue, a leaf under the parent queue the scheduler chart creates. KAI docs,
+# queues: "Only leaf queues (queues with no children) can be used for scheduling jobs"; quota is
+# the "Guaranteed resource allocation", limit the "Hard cap on resource consumption" (-1 = no
+# limit); units are "CPU: Millicores (1000 = 1 CPU core)", "Memory: Megabytes (MB = 10^6 bytes)",
+# "GPU: Units (1 = full GPU device)".
+# https://github.com/kai-scheduler/KAI-Scheduler/blob/main/docs/queues/README.md
+apiVersion: scheduling.run.ai/v2
+kind: Queue
+metadata:
+  name: tenant
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  displayName: Tenant
+  parentQueue: default-parent-queue
+  priority: 100
+  resources:
+    gpu:
+      quota: 1
+      limit: 2
+      overQuotaWeight: 1
+    cpu:
+      quota: 4000
+      limit: 16000
+      overQuotaWeight: 1
+    memory:
+      quota: 8000
+      limit: 32000
+      overQuotaWeight: 1

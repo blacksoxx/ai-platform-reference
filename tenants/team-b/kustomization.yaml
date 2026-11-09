@@ -1,0 +1,58 @@
+# Tenant team-b: the tenant package renamed, plus its vCluster.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../base
+patches:
+  - target:
+      kind: Namespace
+      name: tenant
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: team-b
+  # Every namespaced resource of the package moves into the team's namespace.
+  - target:
+      namespace: tenant
+    patch: |-
+      - op: replace
+        path: /metadata/namespace
+        value: team-b
+  - target:
+      kind: Queue
+      name: tenant
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: team-b
+      - op: replace
+        path: /spec/displayName
+        value: Team B
+  - target:
+      kind: RoleBinding
+      name: tenant-admins
+    patch: |-
+      - op: replace
+        path: /subjects/0/name
+        value: team-b
+  - target:
+      kind: AppProject
+      name: tenant
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: team-b
+      - op: replace
+        path: /spec/description
+        value: Team B
+      - op: replace
+        path: /spec/destinations/0/namespace
+        value: team-b
+helmCharts:
+  - name: vcluster
+    repo: https://charts.loft.sh
+    version: 0.37.6 # checked 2026-11-09
+    releaseName: team-b
+    namespace: team-b
+    includeCRDs: true
+    valuesFile: ../vcluster-values.yaml

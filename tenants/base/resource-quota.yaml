@@ -1,0 +1,17 @@
+# The team's share of the cluster. GPUs are the scarce resource: the quota here is the hard
+# ceiling, the KAI queue decides fair sharing below it.
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: tenant
+  namespace: tenant
+spec:
+  hard:
+    requests.cpu: "16"
+    requests.memory: 32Gi
+    limits.memory: 64Gi
+    requests.nvidia.com/gpu: "2"
+    requests.amd.com/gpu: "1"
+    pods: "100"
+    services: "20"
+    persistentvolumeclaims: "20"

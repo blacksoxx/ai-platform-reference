@@ -1,0 +1,42 @@
+# Values for the loft/vcluster chart shared by every tenant. Each tenant directory declares the
+# chart with its own release name, so the control plane (a StatefulSet) runs inside the tenant's
+# namespace and workloads created in the virtual cluster are synced into the same namespace,
+# where the quota, the network policy and the admission policies apply to them.
+# Chart: https://github.com/loft-sh/vcluster/tree/main/chart (0.37.6)
+sync:
+  toHost:
+    pods:
+      # Synced Pods that name a host scheduler are left to it: tenant workloads that set
+      # schedulerName kai-scheduler are placed by KAI, with the team's queue.
+      hybridScheduling:
+        enabled: true
+        hostSchedulers:
+          - kai-scheduler
+      # The /etc/hosts rewrite init container comes from mirror.gcr.io, which the registry policy
+      # does not allow; it is only needed for Pod-hostname based DNS and stays off.
+      rewriteHosts:
+        enabled: false
+
+controlPlane:
+  statefulSet:
+    pods:
+      labels:
+        # Required by policies/require-labels.yaml, which applies to this Pod too.
+        app.kubernetes.io/name: vcluster
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 1Gi
+  serviceMonitor:
+    enabled: true
+
+# Quota, limits and network policy are owned by the tenant package, not by vCluster.
+policies:
+  resourceQuota:
+    enabled: false
+  limitRange:
+    enabled: false
+  networkPolicy:
+    enabled: false

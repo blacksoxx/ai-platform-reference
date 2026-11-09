@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tenant
+  labels:
+    app.kubernetes.io/part-of: ai-platform
+    # Puts the Kyverno policies in policies/ in scope for everything created here.
+    ai-platform.io/tenant: "true"
+    # The vCluster control plane runs as root (baseline); tenant workloads are expected to
+    # meet restricted, and get a warning when they do not.
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/warn: restricted

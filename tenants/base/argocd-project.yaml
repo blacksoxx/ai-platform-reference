@@ -1,0 +1,30 @@
+# The team's Argo CD project: it may deploy from this repository into its own namespace, and
+# nothing else. The guard rails (quota, limits, network policy, RBAC) stay out of its reach.
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: tenant
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  description: Tenant project
+  sourceRepos:
+    - https://github.com/blacksoxx/ai-platform-reference.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: tenant
+  clusterResourceWhitelist: []
+  namespaceResourceBlacklist:
+    - group: ""
+      kind: ResourceQuota
+    - group: ""
+      kind: LimitRange
+    - group: cilium.io
+      kind: CiliumNetworkPolicy
+    - group: networking.k8s.io
+      kind: NetworkPolicy
+    - group: rbac.authorization.k8s.io
+      kind: RoleBinding
+    - group: rbac.authorization.k8s.io
+      kind: Role

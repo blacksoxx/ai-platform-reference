@@ -1,0 +1,21 @@
+# The tenant package: everything one team gets. Names and namespaces carry the placeholder
+# "tenant" and are patched by each tenant directory (team-a/, team-b/), which also adds the
+# team's vCluster from the shared tenants/vcluster-values.yaml.
+#
+#   Namespace          labelled ai-platform.io/tenant=true, which puts the admission policies in scope
+#   ResourceQuota      the team's share of CPU, memory, GPUs and object counts
+#   LimitRange         defaults so that every Pod has requests and limits
+#   CiliumNetworkPolicy ingress only from the team itself, the Gateway and Prometheus
+#   Queue (KAI)        guaranteed quota and hard limit for GPUs, CPU and memory
+#   RoleBinding        the team's group administers its namespace, nothing else
+#   AppProject         the team may deploy with Argo CD into its namespace only
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - resource-quota.yaml
+  - limit-range.yaml
+  - network-policy.yaml
+  - kai-queue.yaml
+  - rbac.yaml
+  - argocd-project.yaml

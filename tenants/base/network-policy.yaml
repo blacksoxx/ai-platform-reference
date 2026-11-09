@@ -1,0 +1,47 @@
+# Tenant isolation at the network layer. Syntax from the Cilium policy examples shipped with
+# 1.20.4 (examples/policies/kubernetes/namespace, l3/entities, l7/dns): an empty
+# endpointSelector covers every Pod in the namespace; an empty fromEndpoints/toEndpoints entry
+# means "the same namespace"; other namespaces are selected with k8s:io.kubernetes.pod.namespace.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: tenant-isolation
+  namespace: tenant
+spec:
+  endpointSelector: {}
+  ingress:
+    # The team's own Pods.
+    - fromEndpoints:
+        - {}
+    # The platform Gateway (routes the team publishes) and Prometheus (scrapes).
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: platform-gateway
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: monitoring
+  egress:
+    # The team's own Pods, including its vCluster API.
+    - toEndpoints:
+        - {}
+    # Cluster DNS, with DNS visibility in Hubble.
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s:k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"
+    # The host API server: the vCluster control plane syncs through it.
+    - toEntities:
+        - kube-apiserver
+    # The shared inference endpoint.
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: inference
+    # Outside the cluster: model weights, datasets, package indexes.
+    - toEntities:
+        - world
