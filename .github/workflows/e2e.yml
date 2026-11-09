@@ -1,0 +1,55 @@
+name: e2e
+
+# Brings the whole platform up on a kind cluster inside the runner, exactly as `make ci-up`
+# does on a laptop, waits for every Argo CD Application to be Healthy and runs the proofs in
+# scripts/e2e.d. Argo CD tracks the main branch, so this runs after merges and on demand.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  KIND_VERSION: 0.33.0
+  KUBECTL_VERSION: 1.36.6
+  KUSTOMIZE_VERSION: 5.8.3
+  CILIUM_CLI_VERSION: v0.20.2
+
+jobs:
+  kind:
+    name: bootstrap on kind and run the proofs
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - name: Install pinned tools (helm and docker are on the runner)
+        run: |
+          set -eu
+          gh="https://github.com"
+          sudo curl -fsSLo /usr/local/bin/kind "$gh/kubernetes-sigs/kind/releases/download/v${KIND_VERSION}/kind-linux-amd64"
+          sudo chmod +x /usr/local/bin/kind
+          sudo curl -fsSLo /usr/local/bin/kubectl "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
+          sudo chmod +x /usr/local/bin/kubectl
+          curl -fsSL "$gh/kubernetes-sigs/kustomize/releases/download/kustomize/v${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_linux_amd64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin kustomize
+          curl -fsSL "$gh/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-amd64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin cilium
+          kind version; kubectl version --client; kustomize version; cilium version --client; helm version --short
+
+      - name: Bootstrap the ci environment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # read access while the repository is private
+        run: make ci-up
+
+      - name: Wait for every Application and run the proofs
+        run: E2E_TIMEOUT=2400 make e2e
+
+      - name: Diagnostics
+        if: failure()
+        run: |
+          kubectl get applications.argoproj.io -n argocd || true
+          kubectl get pods -A | grep -vE 'Running|Completed' || true
+          kubectl get events -A --sort-by=.lastTimestamp | tail -40 || true
