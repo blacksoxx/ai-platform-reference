@@ -1,0 +1,12 @@
+# Private planning notes, kept out of the public repository on purpose
+DOCS untracked/
+
+# macOS
+.DS_Store
+
+# Kustomize helmCharts chart cache
+**/charts/
+
+# Local kubeconfigs and scratch
+*.kubeconfig
+.scratch/
