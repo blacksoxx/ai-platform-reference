@@ -7,6 +7,10 @@ configs:
   cm:
     # Default is 180s; the e2e suite pushes a commit and expects the change within a minute.
     timeout.reconciliation: 60s
+  params:
+    # One manifest generation at a time: rendering a dozen Helm charts in parallel on a small
+    # node starved the repo-server's own health endpoint.
+    reposerver.parallelism.limit: 1
 
 controller:
   resources:
@@ -19,10 +23,20 @@ controller:
 repoServer:
   resources:
     requests:
-      cpu: 100m
+      cpu: 250m
       memory: 256Mi
     limits:
       memory: 1Gi
+  # A kind node shared by the whole platform is slow while scanners and model downloads run;
+  # the chart's one-second probe timeout killed a healthy repo-server every few minutes.
+  readinessProbe:
+    timeoutSeconds: 10
+    failureThreshold: 6
+    initialDelaySeconds: 30
+  livenessProbe:
+    timeoutSeconds: 10
+    failureThreshold: 6
+    initialDelaySeconds: 60
 
 server:
   resources:

@@ -1,5 +1,12 @@
-# ci: cluster name for the reports and small requests on a kind cluster.
+# ci: cluster name for the reports and small requests on a kind cluster. The posture scan is
+# what the ci proof checks; image vulnerability scanning (Trivy covers it) and the node scan
+# stay off here because their first run saturated the shared kind nodes.
 clusterName: ai-platform-ci
+
+capabilities:
+  nodeScan: disable
+  nodeSbomGeneration: disable
+  vulnerabilityScan: disable
 
 kubescape:
   resources:

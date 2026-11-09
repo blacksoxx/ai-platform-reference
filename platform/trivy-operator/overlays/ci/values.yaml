@@ -1,4 +1,7 @@
-# ci: small requests for the operator and for each scan job.
+# ci: one scan job at a time and small requests for the operator and for each scan job; the
+# kind nodes are shared by the whole platform.
+operator:
+  scanJobsConcurrentLimit: 1
 resources:
   requests:
     cpu: 50m
@@ -11,5 +14,5 @@ trivy:
       cpu: 100m
       memory: 256Mi
     limits:
-      cpu: "1"
+      cpu: 500m
       memory: 1Gi

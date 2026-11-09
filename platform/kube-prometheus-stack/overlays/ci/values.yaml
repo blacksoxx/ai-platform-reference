@@ -37,6 +37,16 @@ prometheusOperator:
       memory: 128Mi
     limits:
       memory: 512Mi
+  # The chart's one-second probe timeout killed the operator while the node was busy with the
+  # first scans and downloads; it needs a minute to connect and list its CRDs under load.
+  livenessProbe:
+    timeoutSeconds: 10
+    failureThreshold: 6
+    initialDelaySeconds: 60
+  readinessProbe:
+    timeoutSeconds: 10
+    failureThreshold: 6
+    initialDelaySeconds: 20
 
 kube-state-metrics:
   resources:
