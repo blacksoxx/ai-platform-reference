@@ -1,0 +1,34 @@
+# lab: the RKE2 cluster on real hardware. Argo CD runs on the control-plane node and must not
+# be scheduled onto a GPU node, which carries a vendor taint (see clusters/lab).
+global:
+  domain: argocd.lab.ai-platform.local
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: "true"
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+
+controller:
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      memory: 2Gi
+
+repoServer:
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      memory: 2Gi
+
+server:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 1Gi

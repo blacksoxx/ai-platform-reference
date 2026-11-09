@@ -1,0 +1,7 @@
+# Argo CD, shared part. The chart itself is declared in each overlay (one pinned version per
+# environment, checked for consistency by scripts/lint.sh); this base holds the namespace and
+# the values every environment shares (values.yaml).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml

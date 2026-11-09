@@ -1,0 +1,41 @@
+# Values for the argo/argo-cd chart shared by every environment. Environment overlays add
+# their own values.yaml on top (sizes, domain).
+# Chart: https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd
+configs:
+  cm:
+    # Every component in this repository is a Kustomize overlay, and upstream software is
+    # pulled in through the helmCharts field of kustomization.yaml. Argo CD docs, "Kustomize":
+    # "Doing so requires that you pass the --enable-helm flag to the kustomize build command."
+    # Overlays reference ../../base/values.yaml, which the default load restrictor forbids.
+    # https://argo-cd.readthedocs.io/en/stable/user-guide/kustomize/#build-options
+    kustomize.buildOptions: --enable-helm --load-restrictor LoadRestrictionsNone
+    # App of apps with sync waves needs the health of child Applications. Argo CD docs, "Health":
+    # "The health assessment of argoproj.io/Application CRD has been removed in argocd 1.8",
+    # and this is the script the same page gives to restore it.
+    # https://argo-cd.readthedocs.io/en/stable/operator-manual/health/#argocd-app
+    resource.customizations.health.argoproj.io_Application: |
+      hs = {}
+      hs.status = "Progressing"
+      hs.message = ""
+      if obj.status ~= nil then
+        if obj.status.health ~= nil then
+          hs.status = obj.status.health.status
+          if obj.status.health.message ~= nil then
+            hs.message = obj.status.health.message
+          end
+        end
+      end
+      return hs
+  params:
+    # TLS terminates at the Gateway in front of Argo CD; the server speaks plain HTTP inside
+    # the cluster. Chart parameter configs.params."server.insecure".
+    server.insecure: true
+
+# No SSO in this reference platform: the local admin account is enough and Dex would add a
+# component that has nothing to teach here.
+dex:
+  enabled: false
+
+# Notifications are not wired to any channel yet; keep the controller off.
+notifications:
+  enabled: false

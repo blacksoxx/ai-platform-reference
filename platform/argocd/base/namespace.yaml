@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argocd
+  labels:
+    app.kubernetes.io/part-of: ai-platform
+    # Pod Security Standards: Argo CD runs unprivileged; this namespace enforces the baseline
+    # profile and warns on anything that would not pass restricted.
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/warn: restricted

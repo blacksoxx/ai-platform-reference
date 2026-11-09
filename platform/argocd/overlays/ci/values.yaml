@@ -1,0 +1,49 @@
+# ci: a kind cluster on a laptop or a GitHub runner. One replica of everything, small requests,
+# and short reconciliation so end-to-end tests do not wait on timers.
+global:
+  domain: argocd.ci.ai-platform.local
+
+configs:
+  cm:
+    # Default is 180s; the e2e suite pushes a commit and expects the change within a minute.
+    timeout.reconciliation: 60s
+
+controller:
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      memory: 1Gi
+
+repoServer:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 1Gi
+
+server:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+
+applicationSet:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      memory: 256Mi
+
+redis:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      memory: 256Mi
