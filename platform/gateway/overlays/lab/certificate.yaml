@@ -1,0 +1,20 @@
+# The Gateway's serving certificate for lab, issued by the platform CA.
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: platform-gateway-tls
+  namespace: platform-gateway
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  secretName: platform-gateway-tls
+  dnsNames:
+    - "*.lab.ai-platform.local"
+  duration: 2160h # 90 days, renewed by cert-manager
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: platform-ca
+    kind: ClusterIssuer
+    group: cert-manager.io

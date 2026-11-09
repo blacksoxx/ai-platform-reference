@@ -1,0 +1,7 @@
+# The platform Gateway: one Gateway API Gateway, programmed by Cilium, in front of every web UI
+# and the inference endpoint. HTTPRoutes live next to the component they expose and attach to
+# this Gateway from their own namespace. TLS comes from the platform-ca ClusterIssuer.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml

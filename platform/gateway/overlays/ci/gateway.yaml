@@ -1,0 +1,36 @@
+# The shared Gateway for ci. Cilium docs, Gateway API: "Cilium only programs Gateways with the
+# class cilium"; the controller "creates a service of LoadBalancer type", which LB-IPAM serves
+# from the pool in platform/cilium. A fixed address from that pool makes the nip.io hostnames
+# used by every HTTPRoute stable: "The feature only supports IPAddress type of addresses, and
+# works with the LB-IPAM." https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: platform
+  namespace: platform-gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  gatewayClassName: cilium
+  addresses:
+    - type: IPAddress
+      value: 172.18.255.10
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https
+      protocol: HTTPS
+      port: 443
+      hostname: "*.172-18-255-10.nip.io"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: platform-gateway-tls
+      allowedRoutes:
+        namespaces:
+          from: All

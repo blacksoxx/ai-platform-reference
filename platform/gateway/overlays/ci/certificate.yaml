@@ -1,0 +1,22 @@
+# The Gateway's serving certificate, issued by the platform CA (platform/cert-manager) for the
+# wildcard the HTTPS listener serves. Clients trust it by importing the platform-root-ca secret
+# from the cert-manager namespace (docs/setup-ci.md).
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: platform-gateway-tls
+  namespace: platform-gateway
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  secretName: platform-gateway-tls
+  dnsNames:
+    - "*.172-18-255-10.nip.io"
+  duration: 2160h # 90 days, renewed by cert-manager
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: platform-ca
+    kind: ClusterIssuer
+    group: cert-manager.io
