@@ -1,0 +1,7 @@
+# Values for external-secrets/external-secrets shared by every environment.
+# Chart: https://github.com/external-secrets/external-secrets/tree/main/deploy/charts/external-secrets
+installCRDs: true
+
+serviceMonitor:
+  # Scraped by the platform Prometheus (CRD from platform/prometheus-operator-crds).
+  enabled: true

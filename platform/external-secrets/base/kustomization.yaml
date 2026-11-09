@@ -1,0 +1,8 @@
+# External Secrets Operator: Kubernetes Secrets materialised from Vault. The chart is declared
+# per overlay; the base holds the namespace, shared values and the ClusterSecretStore that
+# every ExternalSecret in the platform refers to.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - cluster-secret-store.yaml
