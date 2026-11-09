@@ -12,12 +12,17 @@ resources:
   - cilium.yaml
   - cert-manager.yaml
   - vault.yaml
+  - fake-gpu-operator.yaml
   # wave 1: needs Vault configured
   - external-secrets.yaml
   # wave 2: needs External Secrets and the platform CA
   - kube-prometheus-stack.yaml
   - gateway.yaml
   - otel-collector.yaml
+  - dashboards.yaml
+  - alerts.yaml
+  # wave 4: workloads
+  - workload-gpu-probe.yaml
 patches:
   # Every Application tracks this repository and branch; set once here instead of in each file.
   - target:

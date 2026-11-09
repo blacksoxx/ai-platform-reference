@@ -1,0 +1,22 @@
+# Grafana dashboards as ConfigMaps. kube-prometheus-stack's Grafana sidecar loads every
+# ConfigMap labelled grafana_dashboard=1 and files it under the folder named by the
+# grafana_folder annotation (platform/kube-prometheus-stack/base/values.yaml).
+#
+# gpu/dcgm-exporter-dashboard.json is NVIDIA's dashboard from the dcgm-exporter repository,
+# release 4.9.0 (Apache-2.0), unchanged:
+# https://raw.githubusercontent.com/NVIDIA/dcgm-exporter/4.9.0/grafana/dcgm-exporter-dashboard.json
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: monitoring
+generatorOptions:
+  disableNameSuffixHash: true
+  labels:
+    grafana_dashboard: "1"
+    app.kubernetes.io/part-of: ai-platform
+configMapGenerator:
+  - name: dashboard-gpu-dcgm-exporter
+    options:
+      annotations:
+        grafana_folder: GPU
+    files:
+      - gpu/dcgm-exporter-dashboard.json
