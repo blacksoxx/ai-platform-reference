@@ -1,0 +1,6 @@
+# Kyverno: policy as Kubernetes resources, enforced at admission. The policies themselves live
+# in policies/ (applied one wave later); this component is the engine.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml

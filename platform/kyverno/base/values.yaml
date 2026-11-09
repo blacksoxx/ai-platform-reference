@@ -1,0 +1,15 @@
+# Values for kyverno/kyverno shared by every environment.
+# Chart: https://github.com/kyverno/kyverno/tree/main/charts/kyverno (3.9.2, Kyverno v1.19.2)
+# Every controller exposes metrics; the platform Prometheus scrapes them through ServiceMonitors.
+admissionController:
+  serviceMonitor:
+    enabled: true
+backgroundController:
+  serviceMonitor:
+    enabled: true
+cleanupController:
+  serviceMonitor:
+    enabled: true
+reportsController:
+  serviceMonitor:
+    enabled: true
