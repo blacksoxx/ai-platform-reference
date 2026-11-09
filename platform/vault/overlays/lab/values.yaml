@@ -1,0 +1,18 @@
+# lab: a standalone Vault with persistent storage on the control-plane node. It is initialised
+# once by an operator (docs/runbooks/vault-init.md), which also creates the Kubernetes auth
+# method, the "platform" KV v2 engine and the external-secrets role, exactly as the ci Job does.
+# Chart values server.standalone.enabled and server.dataStorage.
+server:
+  standalone:
+    enabled: true
+  dataStorage:
+    enabled: true
+    size: 10Gi
+    # null means the cluster's default StorageClass; RKE2 ships none, see docs/setup-lab.md.
+    storageClass: null
+  nodeSelector:
+    node-role.kubernetes.io/control-plane: "true"
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule

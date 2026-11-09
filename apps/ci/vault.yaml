@@ -1,0 +1,22 @@
+# Vault in wave 0 together with its configuration Job (a Sync hook inside the overlay), so that
+# the auth role External Secrets needs exists before wave 1 starts.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: vault
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  source:
+    path: platform/vault/overlays/ci
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: vault
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vault
+  labels:
+    app.kubernetes.io/part-of: ai-platform
+    # The Vault server asks for the IPC_LOCK capability to keep secrets out of swap, which the
+    # restricted profile forbids; baseline is enforced and restricted violations are reported.
+    pod-security.kubernetes.io/enforce: baseline
+    pod-security.kubernetes.io/warn: restricted

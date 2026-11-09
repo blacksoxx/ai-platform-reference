@@ -1,0 +1,7 @@
+# HashiCorp Vault: the secret store behind External Secrets. The chart is declared per overlay;
+# ci runs a dev-mode server seeded by a Job, lab a standalone server with persistent storage
+# and a documented one-time initialisation (docs/runbooks/vault-init.md).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml

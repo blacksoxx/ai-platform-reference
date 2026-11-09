@@ -1,0 +1,23 @@
+# Values for hashicorp/vault shared by every environment.
+# Chart: https://github.com/hashicorp/vault-helm (chart 0.34.1, Vault 2.0.4)
+
+# Secrets reach workloads through External Secrets Operator, not through sidecar injection.
+injector:
+  enabled: false
+
+# The web UI, reachable through the platform Gateway.
+ui:
+  enabled: true
+
+server:
+  # Scraped by the platform Prometheus; the ServiceMonitor CRD arrives one wave earlier.
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+
+serverTelemetry:
+  serviceMonitor:
+    enabled: true

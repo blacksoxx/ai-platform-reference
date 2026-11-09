@@ -1,0 +1,9 @@
+# ci: Vault in dev mode. In-memory storage, unsealed at start, a fixed root token, and no
+# persistence: the right thing for a disposable cluster, never for anything else.
+# Chart values server.dev.enabled and server.dev.devRootToken.
+server:
+  dev:
+    enabled: true
+    devRootToken: root
+  dataStorage:
+    enabled: false
