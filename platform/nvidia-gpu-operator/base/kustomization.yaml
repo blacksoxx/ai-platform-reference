@@ -1,0 +1,7 @@
+# NVIDIA GPU Operator for the lab: device plugin, GPU feature discovery, DCGM exporter and the
+# validators. The driver and the container toolkit components are disabled because DGX OS ships
+# both on the Spark. lab only; ci simulates GPUs with platform/fake-gpu-operator.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml

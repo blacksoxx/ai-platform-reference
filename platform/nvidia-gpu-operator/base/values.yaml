@@ -1,0 +1,32 @@
+# Values for nvidia/gpu-operator (lab).
+# GPU Operator docs, "Pre-installed NVIDIA GPU Drivers and NVIDIA Container Toolkit": "In this
+# scenario, the NVIDIA GPU driver and the NVIDIA Container Toolkit are already installed", with
+#   helm install ... nvidia/gpu-operator --version=v26.7.2 --set driver.enabled=false --set toolkit.enabled=false
+# https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html
+driver:
+  enabled: false
+toolkit:
+  enabled: false
+
+# "The cdi.enabled field is set to true by default in versions 25.10.0 and later."
+cdi:
+  enabled: true
+
+dcgmExporter:
+  enabled: true
+  serviceMonitor:
+    # Scraped by the platform Prometheus; feeds dashboards/gpu and alerts/gpu.yaml.
+    enabled: true
+    interval: 15s
+
+nodeStatusExporter:
+  enabled: true
+
+# GPU nodes carry the taint ai-platform.io/gpu=<vendor>:NoSchedule (clusters/lab) so that only
+# GPU workloads land on them; every operator DaemonSet must tolerate it.
+daemonsets:
+  tolerations:
+    - key: ai-platform.io/gpu
+      operator: Equal
+      value: nvidia
+      effect: NoSchedule
