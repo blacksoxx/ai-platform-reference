@@ -14,6 +14,9 @@ resources:
   - vault.yaml
   # wave 1: needs Vault configured
   - external-secrets.yaml
+  # wave 2: needs External Secrets and the platform CA
+  - kube-prometheus-stack.yaml
+  - gateway.yaml
 patches:
   # Every Application tracks this repository and branch; set once here instead of in each file.
   - target:

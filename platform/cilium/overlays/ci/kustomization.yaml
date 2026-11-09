@@ -4,3 +4,4 @@ resources:
   - ../../base
   - lb-ip-pool.yaml
   - l2-announcement-policy.yaml
+  - hubble-httproute.yaml

@@ -1,0 +1,19 @@
+# Hubble UI (service map and flows) through the platform Gateway. The Service is created by the
+# Cilium chart in kube-system (hubble.ui.enabled in clusters/ci/cilium-values.yaml).
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: hubble-ui
+  namespace: kube-system
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  parentRefs:
+    - name: platform
+      namespace: platform-gateway
+  hostnames:
+    - hubble.172-18-255-10.nip.io
+  rules:
+    - backendRefs:
+        - name: hubble-ui
+          port: 80
