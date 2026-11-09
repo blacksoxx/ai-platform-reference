@@ -1,0 +1,15 @@
+# LB-IPAM only allocates addresses: "LB IPAM only does IP allocation and doesn't provide load
+# balancing services by itself." L2 announcements make them reachable on the kind network:
+# "this feature will respond to ARP/NDP queries for ExternalIPs and/or LoadBalancer IPs" and
+# "for each service one node at a time will respond". No serviceSelector, so every
+# LoadBalancer Service is announced; kind nodes have a single eth0.
+# https://docs.cilium.io/en/stable/network/l2-announcements/
+apiVersion: cilium.io/v2alpha1
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: kind
+spec:
+  interfaces:
+    - ^eth[0-9]+
+  externalIPs: true
+  loadBalancerIPs: true

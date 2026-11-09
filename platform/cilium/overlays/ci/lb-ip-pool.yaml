@@ -1,0 +1,14 @@
+# Addresses for Services of type LoadBalancer, which is what the Cilium Gateway API controller
+# creates for every Gateway. Cilium docs, "LoadBalancer IP Address Management": "Any service
+# with .spec.type=LoadBalancer can get IPs from any pool" and "The pool will allocate to any
+# service if no service selector is specified." https://docs.cilium.io/en/stable/network/lb-ipam/
+#
+# The range is the top /24 of the kind Docker network created by clusters/ci/bootstrap.sh
+# (172.18.0.0/16); Docker hands out container addresses from the bottom, so they never meet.
+apiVersion: cilium.io/v2
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: kind
+spec:
+  blocks:
+    - cidr: 172.18.255.0/24

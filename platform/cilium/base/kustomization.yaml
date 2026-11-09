@@ -1,0 +1,8 @@
+# Cilium configuration managed by Argo CD. The CNI itself is installed by the environment
+# bootstrap (clusters/ci/bootstrap.sh with clusters/ci/cilium-values.yaml, RKE2's bundled chart
+# in lab), because a CNI cannot be applied by a controller that needs the network to run.
+# What lives here is everything that comes after: LoadBalancer IP pools, L2 announcements,
+# the Gateway and, in lab, the HelmChartConfig that tunes RKE2's Cilium.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources: []
