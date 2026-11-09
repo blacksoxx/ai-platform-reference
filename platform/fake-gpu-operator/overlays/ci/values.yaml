@@ -1,0 +1,16 @@
+# Values for the fake-gpu-operator chart (ci only).
+# README: nodes carrying "run.ai/simulated-gpu-node-pool=default" join the "default" pool and
+# get the GPUs described here; the kind workers are labelled in clusters/ci/kind-config.yaml.
+# https://github.com/run-ai/fake-gpu-operator
+topology:
+  nodePoolLabelKey: run.ai/simulated-gpu-node-pool
+  nodePools:
+    default:
+      gpuProduct: Tesla-T4
+      gpuCount: 2
+      gpuMemory: 15360
+
+# The status updater reads utilisation from Prometheus; point it at the platform Prometheus
+# instead of the chart's default (a "runai" namespace that does not exist here).
+prometheus:
+  url: http://monitoring-prometheus.monitoring.svc:9090

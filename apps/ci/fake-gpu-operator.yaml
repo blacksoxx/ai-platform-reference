@@ -1,0 +1,21 @@
+# Simulated GPUs for ci: nvidia.com/gpu on the labelled kind workers and DCGM-style metrics.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fake-gpu-operator
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: default
+  source:
+    path: platform/fake-gpu-operator/overlays/ci
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gpu-operator
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

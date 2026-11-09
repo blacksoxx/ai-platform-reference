@@ -1,0 +1,18 @@
+# The fake operator exposes DCGM-style metrics on a Service named like the real exporter
+# (nvidia-dcgm-exporter, port gpu-metrics 9400) with a prometheus.io/scrape annotation only.
+# The platform Prometheus discovers targets through ServiceMonitors, so one is added here; the
+# same metric names then feed the GPU dashboard and alerts in ci and lab alike.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: nvidia-dcgm-exporter
+  namespace: gpu-operator
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  selector:
+    matchLabels:
+      app: nvidia-dcgm-exporter
+  endpoints:
+    - port: gpu-metrics
+      interval: 15s

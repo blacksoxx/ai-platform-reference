@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gpu-operator
+  labels:
+    app.kubernetes.io/part-of: ai-platform
+    # GPU Operator docs: "label the namespace for the Operator to set the enforcement policy to
+    # privileged"; device plugins need host devices and host paths.
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/warn: privileged

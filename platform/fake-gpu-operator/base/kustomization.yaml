@@ -1,0 +1,8 @@
+# Run:ai fake-gpu-operator: simulated NVIDIA GPUs for the ci environment. It advertises
+# nvidia.com/gpu on labelled nodes, injects a fake nvidia-smi into GPU pods and serves
+# DCGM-style metrics, so scheduling, quotas, dashboards and alerts are tested without hardware.
+# ci only; lab uses platform/nvidia-gpu-operator in the same namespace.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
