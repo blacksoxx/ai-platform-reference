@@ -1,0 +1,7 @@
+# ROCm Kubernetes device plugin and node labeller for the AMD node (lab only). The AMD GPU
+# Operator targets Instinct accelerators, so the Ryzen AI Max+ APU gets the plugin directly:
+# it exposes amd.com/gpu by mounting /dev/kfd and the /dev/dri render nodes into pods.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml

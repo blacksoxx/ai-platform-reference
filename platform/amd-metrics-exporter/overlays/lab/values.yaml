@@ -1,0 +1,3 @@
+# lab: nothing beyond the shared values; the Halo is the only AMD node.
+image:
+  pullPolicy: IfNotPresent

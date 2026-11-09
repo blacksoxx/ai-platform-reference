@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: amd-gpu
+resources:
+  - ../../base
+helmCharts:
+  - name: amd-gpu
+    repo: https://rocm.github.io/k8s-device-plugin
+    version: 0.22.0 # device plugin 1.31.0.9, checked 2026-11-09
+    releaseName: amd-gpu
+    namespace: amd-gpu
+    includeCRDs: true
+    valuesFile: ../../base/values.yaml
+    additionalValuesFiles:
+      - values.yaml

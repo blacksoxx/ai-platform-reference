@@ -1,0 +1,29 @@
+# Values for amd-metrics/device-metrics-exporter-charts (lab).
+# Chart: https://github.com/ROCm/device-metrics-exporter (helm chart in the repository)
+# Runs on AMD GPU nodes only and is scraped through a ServiceMonitor.
+nodeSelector:
+  ai-platform.io/gpu: amd
+
+tolerations:
+  - key: ai-platform.io/gpu
+    operator: Equal
+    value: amd
+    effect: NoSchedule
+
+monitor:
+  resources:
+    gpu: true
+    nic: false
+
+serviceMonitor:
+  enabled: true
+  interval: 15s
+
+# The chart asks for 2 CPUs and 4 GiB by default; an exporter on a single-GPU node needs far less.
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi

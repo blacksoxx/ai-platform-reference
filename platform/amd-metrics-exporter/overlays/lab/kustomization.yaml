@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: amd-gpu
+resources:
+  - ../../base
+helmCharts:
+  - name: device-metrics-exporter-charts
+    repo: https://rocm.github.io/device-metrics-exporter
+    version: v1.5.3 # checked 2026-11-09
+    releaseName: amd-metrics-exporter
+    namespace: amd-gpu
+    includeCRDs: true
+    valuesFile: ../../base/values.yaml
+    additionalValuesFiles:
+      - values.yaml

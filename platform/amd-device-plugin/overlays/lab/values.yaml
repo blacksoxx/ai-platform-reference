@@ -1,0 +1,15 @@
+# lab: nothing beyond the shared values; the Halo is the only AMD node.
+dp:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      memory: 128Mi
+lbl:
+  resources:
+    requests:
+      cpu: 10m
+      memory: 32Mi
+    limits:
+      memory: 128Mi

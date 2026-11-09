@@ -1,0 +1,23 @@
+# Values for amd-device-plugin/amd-gpu (lab).
+# Chart: https://artifacthub.io/packages/helm/amd-gpu-helm/amd-gpu (ROCm/k8s-device-plugin)
+# The plugin DaemonSet runs only on AMD GPU nodes, selected by the platform's vendor label and
+# tolerating the vendor taint (clusters/lab). Node Feature Discovery is already provided by the
+# NVIDIA GPU Operator in the same cluster, so the chart's own copy stays off.
+nfd:
+  enabled: false
+
+# The labeller adds amd.com/gpu.* labels (family, VRAM, compute units) used by scheduling.
+labeller:
+  enabled: true
+
+node_selector_enabled: true
+node_selector:
+  ai-platform.io/gpu: amd
+
+tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
+  - key: ai-platform.io/gpu
+    operator: Equal
+    value: amd
+    effect: NoSchedule

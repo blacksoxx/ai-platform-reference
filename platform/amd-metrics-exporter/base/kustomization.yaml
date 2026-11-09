@@ -1,0 +1,5 @@
+# ROCm device metrics exporter for the AMD node (lab only): GPU utilisation, memory, power and
+# temperature for Prometheus, the AMD counterpart of DCGM. Same namespace as the device plugin.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources: []
