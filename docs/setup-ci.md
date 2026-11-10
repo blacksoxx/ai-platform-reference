@@ -66,14 +66,19 @@ Whether your machine can reach `172.18.255.10` depends on how Docker runs:
 
 - Linux: the Docker bridge is on the host; the address is reachable directly.
 - macOS with OrbStack: container networks are routed to the host; reachable directly.
-- macOS with Docker Desktop: container networks are not routable from the host. Use a port
-  forward to the Gateway's Service and the hostname in the Host header, which is also what the
-  proofs do:
+- macOS with Docker Desktop: container networks are not routable from the host, and the
+  Gateway's Service cannot be port-forwarded (Cilium implements it in eBPF, it has no Pods).
+  Port-forward the component's own Service instead:
 
 ```sh
-kubectl -n platform-gateway port-forward svc/cilium-gateway-platform 8443:443
-curl -k --resolve grafana.172-18-255-10.nip.io:8443:127.0.0.1 https://grafana.172-18-255-10.nip.io:8443/login
+kubectl -n argocd port-forward svc/argocd-server 8080:80          # http://localhost:8080
+kubectl -n monitoring port-forward svc/monitoring-grafana 3000:80  # http://localhost:3000
+kubectl -n kube-system port-forward svc/hubble-ui 12000:80         # http://localhost:12000
+kubectl -n inference port-forward svc/inference 8000:8000          # http://localhost:8000/v1/chat/completions
 ```
+
+The proofs never depend on the Gateway address: the inference proof sends its request from a
+Pod inside the cluster to the Gateway's cluster address, with the route's hostname.
 
 The certificate chain is the platform's own. Trust it once:
 
