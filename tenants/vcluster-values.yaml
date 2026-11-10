@@ -3,21 +3,13 @@
 # namespace and workloads created in the virtual cluster are synced into the same namespace,
 # where the quota, the network policy and the admission policies apply to them.
 # Chart: https://github.com/loft-sh/vcluster/tree/main/chart (0.37.6)
+# Hybrid scheduling (sync.toHost.pods.hybridScheduling), which would hand synced Pods that name
+# a host scheduler such as kai-scheduler to it, is a vCluster enterprise feature and stays off.
+# Synced Pods are placed by the host's default scheduler; GPU work that must queue is deployed
+# in the tenant namespace through the team's Argo CD project (docs/adr/0004, 0005).
 sync:
-  fromHost:
-    # Hybrid scheduling needs the host's Nodes in the virtual cluster ("sync.fromHost.nodes.enabled
-    # is false, but required if using hybrid scheduling or virtual scheduler"). Only the nodes that
-    # run this tenant's Pods are synced, which is the chart's default selector.
-    nodes:
-      enabled: true
   toHost:
     pods:
-      # Synced Pods that name a host scheduler are left to it: tenant workloads that set
-      # schedulerName kai-scheduler are placed by KAI, with the team's queue.
-      hybridScheduling:
-        enabled: true
-        hostSchedulers:
-          - kai-scheduler
       # The /etc/hosts rewrite init container comes from mirror.gcr.io, which the registry policy
       # does not allow; it is only needed for Pod-hostname based DNS and stays off.
       rewriteHosts:

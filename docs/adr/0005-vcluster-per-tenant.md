@@ -14,10 +14,11 @@ workloads are synced to it.
 Each tenant directory adds the `loft/vcluster` chart with the team's name as release name,
 in the team's namespace. The control plane runs there as a StatefulSet; Pods created in the
 virtual cluster are synced into the same host namespace, so the quota, LimitRange, network
-policy and Kyverno policies of the tenant package apply to them. Hybrid scheduling is on with
-`kai-scheduler` as a host scheduler, so synced Pods that name it are placed by KAI with the
-team's queue label. vCluster's own quota, limit range and network policy stay off; the tenant
-package owns them.
+policy and Kyverno policies of the tenant package apply to them. Synced Pods are placed by the
+host's default scheduler: hybrid scheduling, which would hand Pods that name `kai-scheduler`
+to KAI, is a vCluster enterprise feature and stays off. Queued GPU work is deployed in the
+tenant namespace through the team's Argo CD project (ADR 0004). vCluster's own quota, limit
+range and network policy stay off; the tenant package owns them.
 
 ## Consequences
 
@@ -27,6 +28,9 @@ package owns them.
   the baseline profile, not restricted), its image registry is on the allow list, and its Pod
   carries the required label. The hosts-rewrite init container is disabled because its image
   comes from a registry the policy does not allow.
+- Work submitted inside the virtual cluster does not queue in KAI. A team that needs the queue
+  deploys that workload in its namespace on the host, through its Argo CD project; the virtual
+  cluster is the team's self-service API for everything else.
 - The virtual cluster's kubeconfig is a Secret (`vc-<team>`) in the team namespace; reaching
   the API from outside goes through a port-forward or a route the team publishes.
 - Persistence for the control plane is `auto`: a PersistentVolumeClaim when a StorageClass

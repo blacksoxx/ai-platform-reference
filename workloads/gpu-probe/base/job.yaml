@@ -1,5 +1,7 @@
 # One GPU, one container, print and exit. The image is images/gpu-probe in this repository.
-# A Job's pod template is immutable, so Argo CD replaces the Job when it changes.
+# A Job's pod template is immutable, so a changed Job is deleted and recreated: Argo CD docs,
+# sync options, Force "only takes effect together with Replace=true" and then syncs with
+# "kubectl delete/create".
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -9,7 +11,7 @@ metadata:
     app.kubernetes.io/name: gpu-probe
     app.kubernetes.io/part-of: ai-platform
   annotations:
-    argocd.argoproj.io/sync-options: Replace=true
+    argocd.argoproj.io/sync-options: Force=true,Replace=true
 spec:
   backoffLimit: 2
   template:

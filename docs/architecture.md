@@ -167,7 +167,7 @@ flowchart TB
       cnp[CiliumNetworkPolicy]
       rb[RoleBinding: group team-a → edit]
       vc[vCluster control plane<br/>StatefulSet, API on Service team-a]
-      synced[synced Pods<br/>scheduled by KAI, queue team-a]
+      synced[synced Pods<br/>host default scheduler]
     end
     q[Queue team-a<br/>parent default-parent-queue]
     proj[AppProject team-a<br/>argocd namespace]
@@ -175,8 +175,10 @@ flowchart TB
     kyv[Kyverno policies<br/>namespaceSelector tenant=true]
   end
   dev((team member)) -->|kubeconfig vc-team-a| vc
-  vc -->|hybrid scheduling: schedulerName kai-scheduler| kai
-  kai --> synced
+  vc -->|sync| synced
+  queued[Pods deployed in team-a<br/>schedulerName kai-scheduler, queue team-a]
+  proj -->|GitOps| queued
+  kai --> queued
   kyv -.admission.-> synced
   kyv -.admission.-> vc
 ```
@@ -187,8 +189,10 @@ vCluster control plane runs inside the tenant namespace, so it is subject to the
 network policy and admission policies as the team's workloads (its image registry is allowed,
 its Pod carries the required label, and the namespace enforces the baseline Pod Security
 profile because the control plane runs as root). Pods created in the virtual cluster are synced
-to the host namespace; those that name `kai-scheduler` are placed by KAI (vCluster hybrid
-scheduling), with the team's queue label. Proofs: 70 (RBAC), 71 (network), 72 (queue), 73 (vCluster).
+to the host namespace and placed by the host's default scheduler; handing them to KAI needs
+vCluster's hybrid scheduling, an enterprise feature, so GPU work that must queue is deployed in
+the tenant namespace through the team's Argo CD project, where `schedulerName: kai-scheduler`
+and the queue label apply (ADR 0004). Proofs: 70 (RBAC), 71 (network), 72 (queue), 73 (vCluster).
 
 ## 8. Security controls
 

@@ -23,7 +23,9 @@ keeps the default scheduler. Namespace ResourceQuotas remain as the outer ceilin
 - Fair sharing with guarantees: a team always gets its quota and may borrow idle capacity up
   to its limit; a third job beyond the limit waits and runs when a GPU frees up (proof 72).
 - Two schedulers in the cluster; the proof and the tenant workloads show the opt-in pattern.
-  Tenants submitting through vCluster get it through hybrid scheduling (ADR 0005).
+  Pods created inside a tenant's vCluster do not reach KAI (hybrid scheduling is a vCluster
+  enterprise feature, ADR 0005); queued work is deployed in the tenant namespace through the
+  team's Argo CD project.
 - Quota beats node labels: nobody has to know which node is theirs, and a GPU never idles
   because a label pinned it to the wrong team.
 - Kueue would also have worked and is the Kubernetes SIG project; KAI was chosen for pod-level
