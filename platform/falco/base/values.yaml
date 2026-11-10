@@ -21,6 +21,9 @@ falcosidekick:
   config:
     alertmanager:
       hostport: http://monitoring-alertmanager.monitoring.svc:9093
+      # The subchart's default endpoint is /api/v1/alerts, which Alertmanager has removed
+      # (it answers 410 Gone); the v2 API is the one that accepts alerts.
+      endpoint: /api/v2/alerts
       minimumpriority: notice
   serviceMonitor:
     enabled: true
