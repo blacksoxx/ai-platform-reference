@@ -4,6 +4,12 @@
 # where the quota, the network policy and the admission policies apply to them.
 # Chart: https://github.com/loft-sh/vcluster/tree/main/chart (0.37.6)
 sync:
+  fromHost:
+    # Hybrid scheduling needs the host's Nodes in the virtual cluster ("sync.fromHost.nodes.enabled
+    # is false, but required if using hybrid scheduling or virtual scheduler"). Only the nodes that
+    # run this tenant's Pods are synced, which is the chart's default selector.
+    nodes:
+      enabled: true
   toHost:
     pods:
       # Synced Pods that name a host scheduler are left to it: tenant workloads that set
