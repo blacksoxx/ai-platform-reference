@@ -24,6 +24,8 @@ spec:
       schedulerName: kai-scheduler
       securityContext:
         runAsNonRoot: true
+        runAsUser: 1000 # the image's "ubuntu" user, by number so the kubelet can check it
+        runAsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
       tolerations:

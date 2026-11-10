@@ -77,8 +77,10 @@ kubectl -n kube-system port-forward svc/hubble-ui 12000:80         # http://loca
 kubectl -n inference port-forward svc/inference 8000:8000          # http://localhost:8000/v1/chat/completions
 ```
 
-The proofs never depend on the Gateway address: the inference proof sends its request from a
-Pod inside the cluster to the Gateway's cluster address, with the route's hostname.
+The proofs never depend on the Gateway address: the inference proof runs a short-lived client
+Pod that resolves the route's hostname to the Gateway Service's cluster address and verifies
+the certificate against the platform root CA, so it crosses the same TLS listener, HTTPRoute
+and Service as an external client's request.
 
 The certificate chain is the platform's own. Trust it once:
 

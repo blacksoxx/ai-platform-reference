@@ -20,6 +20,8 @@ spec:
       restartPolicy: Never
       securityContext:
         runAsNonRoot: true
+        runAsUser: 1000 # the image's "ubuntu" user, by number so the kubelet can check it
+        runAsGroup: 1000
         seccompProfile:
           type: RuntimeDefault
       # GPU nodes are tainted ai-platform.io/gpu=<vendor>:NoSchedule; GPU workloads tolerate it.

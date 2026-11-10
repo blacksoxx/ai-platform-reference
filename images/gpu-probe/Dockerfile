@@ -13,8 +13,9 @@ LABEL org.opencontainers.image.title="gpu-probe" \
 
 COPY --chmod=0755 probe.sh /usr/local/bin/gpu-probe
 
-# Run as the unprivileged "ubuntu" user (uid 1000) that the base image ships.
-# A probe has no reason to be root, and later admission policies will insist.
-USER ubuntu
+# Run as the unprivileged "ubuntu" user (uid 1000, gid 1000) that the base image ships,
+# named by number: with runAsNonRoot set, the kubelet refuses to start a container whose
+# image names its user ("image has non-numeric user, cannot verify user is non-root").
+USER 1000:1000
 
 ENTRYPOINT ["/usr/local/bin/gpu-probe"]
