@@ -9,7 +9,9 @@ trap cleanup EXIT
 
 k create namespace "$ns" --dry-run=client -o yaml | k apply -f - >/dev/null
 k label namespace "$ns" ai-platform.io/tenant=true --overwrite >/dev/null
-k wait --for=condition=Ready clusterpolicy --all --timeout=120s >/dev/null
+# The policies are Kyverno ValidatingPolicy objects (policies/); each reports readiness in
+# status.conditionStatus.ready once the admission controller serves it.
+k wait --for=jsonpath='{.status.conditionStatus.ready}'=true validatingpolicies.policies.kyverno.io --all --timeout=120s >/dev/null
 
 expect_denied() { # <description> <manifest on stdin>
   if out=$(k apply -n "$ns" -f - 2>&1); then

@@ -9,6 +9,7 @@ trap cleanup EXIT
 
 k create namespace "$ns" --dry-run=client -o yaml | k apply -f - >/dev/null
 k label namespace "$ns" ai-platform.io/tenant=true --overwrite >/dev/null
+k wait --for=jsonpath='{.status.conditionStatus.ready}'=true imagevalidatingpolicies.policies.kyverno.io --all --timeout=120s >/dev/null
 
 if out=$(k apply -n "$ns" -f - 2>&1 <<'EOF'
 apiVersion: v1
