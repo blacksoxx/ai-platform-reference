@@ -16,6 +16,8 @@ spec:
     automated:
       prune: true
       selfHeal: true
+    # Client-side apply on purpose: the Job's pod template is immutable and the Job carries
+    # Force=true,Replace=true to be recreated when it changes; with Server-Side Apply, Argo CD
+    # kept reporting the changed Job as Synced and never recreated it.
     syncOptions:
       - CreateNamespace=true
-      - ServerSideApply=true

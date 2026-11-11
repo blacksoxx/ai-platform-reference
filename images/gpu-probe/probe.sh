@@ -22,7 +22,10 @@ echo "--- nvidia"
 # NVIDIA_VISIBLE_DEVICES. Without a request none of that is present.
 echo "NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES:-<unset>}"
 if command -v nvidia-smi >/dev/null 2>&1; then
-  nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv,noheader \
+  # The real nvidia-smi answers the query; the one the fake GPU operator injects on ci only
+  # prints its table, so fall back to that.
+  nvidia-smi --query-gpu=name,driver_version,memory.total --format=csv,noheader 2>/dev/null \
+    || nvidia-smi 2>&1 | head -20 \
     || echo "nvidia-smi: present but exited $?"
 else
   echo "nvidia-smi: not in this container (no NVIDIA GPU injected)"
