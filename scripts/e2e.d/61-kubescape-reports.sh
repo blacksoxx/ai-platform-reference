@@ -17,7 +17,8 @@ if [ "${existing:-0}" -eq 0 ]; then
   echo "posture scan triggered from the kubescape-scheduler CronJob"
 fi
 
-for i in $(seq 1 60); do
+# A posture scan of the whole platform takes about ten minutes on a CPU-capped kind node.
+for i in $(seq 1 120); do
   scans=$(k get workloadconfigurationscans.spdx.softwarecomposition.kubescape.io -A --no-headers 2>/dev/null | wc -l | tr -d ' ')
   if [ "$scans" -gt 0 ]; then
     echo "WorkloadConfigurationScans: $scans"
@@ -26,5 +27,5 @@ for i in $(seq 1 60); do
   fi
   sleep 10
 done
-echo "no Kubescape configuration scans after 600s"
+echo "no Kubescape configuration scans after 1200s"
 exit 1

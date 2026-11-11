@@ -15,7 +15,7 @@ kubescape:
       cpu: 100m
       memory: 256Mi
     limits:
-      cpu: 300m
+      cpu: "1" # a whole posture scan took nine minutes at 300m; it is a burst, not a steady load
       memory: 1Gi
 kubevuln:
   resources:
