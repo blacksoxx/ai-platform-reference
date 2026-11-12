@@ -13,7 +13,9 @@ gang scheduling); Volcano.
 ## Decision
 
 KAI Scheduler (`platform/kai-scheduler`) is installed in both environments. Every tenant has
-a leaf `Queue` under the chart's `default-parent-queue` with a guaranteed `quota`, a hard
+a leaf `Queue` under the chart's `default-parent-queue` (whose quota the platform sets to
+unlimited: the chart ships it at zero, which blocks every non-preemptible workload, and KAI
+classes Deployments as non-preemptible inference) with a guaranteed `quota`, a hard
 `limit` and an `overQuotaWeight` for spare capacity. Workloads opt in per Pod with
 `schedulerName: kai-scheduler` and the label `kai.scheduler/queue: <team>`; everything else
 keeps the default scheduler. Namespace ResourceQuotas remain as the outer ceiling.

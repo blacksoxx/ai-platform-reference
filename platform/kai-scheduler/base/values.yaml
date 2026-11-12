@@ -5,8 +5,27 @@
 
 # The chart creates default-parent-queue and default-queue; tenant queues hang under the parent
 # (tenants/base/kai-queue.yaml) and are the only leaf queues workloads are meant to use.
+# The chart ships the parent with quota 0 on every resource. KAI lets only preemptible
+# workloads (its train priority class, the default for Jobs) run over quota; a Deployment is
+# inference class, non-preemptible, and must fit in the quota at every level of the queue
+# tree, so with a zero parent quota no Deployment ever scheduled ("NonPreemptibleOverQuota:
+# default-parent-queue quota is 0 cores"). KAI queues doc: "quota: -1" is "Unlimited quota",
+# "limit: -1" is "No limit"; the tenant leaf queues carry the real quotas and limits.
 defaultQueue:
   createDefaultQueue: true
+  parentResources:
+    cpu:
+      quota: -1
+      limit: -1
+      overQuotaWeight: 1
+    gpu:
+      quota: -1
+      limit: -1
+      overQuotaWeight: 1
+    memory:
+      quota: -1
+      limit: -1
+      overQuotaWeight: 1
 
 # ServiceMonitors for the scheduler components (CRD from platform/prometheus-operator-crds).
 prometheus:
