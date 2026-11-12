@@ -8,7 +8,12 @@ k() { kubectl --context "$KUBE_CONTEXT" "$@"; }
 
 k -n falco rollout status daemonset/falco --timeout=300s >/dev/null
 k -n falco wait --for=condition=Ready pod -l app.kubernetes.io/name=falcosidekick --timeout=120s >/dev/null
-target=$(k -n kube-system get pods -l k8s-app=cilium -o jsonpath='{.items[0].metadata.name}')
+# Falco sees the node it runs on: pick one Falco Pod, open the shell in a container on that
+# node (the Cilium agent there, always present), and read that Falco Pod's own logs.
+falco_pod=$(k -n falco get pods -l app.kubernetes.io/name=falco --field-selector=status.phase=Running -o jsonpath='{.items[0].metadata.name}')
+node=$(k -n falco get pod "$falco_pod" -o jsonpath='{.spec.nodeName}')
+target=$(k -n kube-system get pods -l k8s-app=cilium --field-selector="spec.nodeName=$node" -o jsonpath='{.items[0].metadata.name}')
+[ -n "$falco_pod" ] && [ -n "$target" ] || { echo "no Falco Pod or no Cilium agent on node '$node'"; exit 1; }
 
 python3 - "$KUBE_CONTEXT" "$target" <<'EOF'
 import pty, sys
@@ -17,8 +22,8 @@ pty.spawn(["kubectl", "--context", ctx, "-n", "kube-system", "exec", "-it", pod,
 EOF
 
 for i in $(seq 1 24); do
-  if k -n falco logs daemonset/falco --since=5m 2>/dev/null | grep -q 'Terminal shell in container'; then
-    echo "Falco detected the shell in $target (rule: Terminal shell in container)"
+  if k -n falco logs "$falco_pod" --since=5m 2>/dev/null | grep 'Terminal shell in container' | grep -q 'cilium-agent'; then
+    echo "Falco on $node detected the shell in $target/cilium-agent (rule: Terminal shell in container)"
     break
   fi
   [ "$i" -eq 24 ] && { echo "Falco did not report the shell within 120s"; exit 1; }
