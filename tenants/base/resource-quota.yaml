@@ -1,5 +1,7 @@
-# The team's share of the cluster. GPUs are the scarce resource: the quota here is the hard
-# ceiling, the KAI queue decides fair sharing below it.
+# The team's share of the cluster. GPUs are the scarce resource: the KAI queue (kai-queue.yaml,
+# quota 1, limit 2) decides who runs and who waits; this quota is only the hard ceiling above
+# it, so it is set higher than the queue's limit. With both equal, the quota rejects the Pod at
+# admission and nothing ever waits in the queue (proof 72).
 apiVersion: v1
 kind: ResourceQuota
 metadata:
@@ -10,8 +12,8 @@ spec:
     requests.cpu: "16"
     requests.memory: 32Gi
     limits.memory: 64Gi
-    requests.nvidia.com/gpu: "2"
-    requests.amd.com/gpu: "1"
+    requests.nvidia.com/gpu: "4"
+    requests.amd.com/gpu: "2"
     pods: "100"
     services: "20"
     persistentvolumeclaims: "20"
