@@ -3,26 +3,14 @@
 [![ci](https://github.com/blacksoxx/ai-platform-reference/actions/workflows/ci.yml/badge.svg)](https://github.com/blacksoxx/ai-platform-reference/actions/workflows/ci.yml)
 [![e2e](https://github.com/blacksoxx/ai-platform-reference/actions/workflows/e2e.yml/badge.svg)](https://github.com/blacksoxx/ai-platform-reference/actions/workflows/e2e.yml)
 [![images](https://github.com/blacksoxx/ai-platform-reference/actions/workflows/images.yml/badge.svg)](https://github.com/blacksoxx/ai-platform-reference/actions/workflows/images.yml)
+[![license](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
 A GitOps-managed Kubernetes platform for AI workloads. NVIDIA and AMD GPUs, arm64 and amd64,
 in one cluster, applied entirely by Argo CD from this repository, with multi-tenancy, queue-based
 GPU scheduling, an OpenAI-compatible inference front door, full observability and a standard
 security stack. Every claim it makes is checked by an end-to-end test you can run on a laptop.
 
-```
-                           git push ──► Argo CD (app of apps, sync waves)
-                                               │
-   ┌───────────────────────────────────────────┼──────────────────────────────────────────┐
-   │  -1  Prometheus Operator CRDs             │                                          │
-   │   0  Cilium · cert-manager · Vault · Kyverno · KAI Scheduler · GPU operators         │
-   │   1  External Secrets                     ▼                                          │
-   │   2  Prometheus · Grafana · Alertmanager · OpenTelemetry · Gateway · Inference        │
-   │      Trivy Operator · Kubescape · Falco · dashboards · alerts                        │
-   │   3  Admission policies                                                              │
-   │   4  Tenants: namespace, quota, network policy, KAI queue, RBAC, project, vCluster   │
-   │   5  Tenant workloads                                                                │
-   └──────────────────────────────────────────────────────────────────────────────────────┘
-```
+![Architecture of ai-platform-reference](docs/img/platform.svg)
 
 ## What it does
 
@@ -31,8 +19,8 @@ security stack. Every claim it makes is checked by an end-to-end test you can ru
   Service and one Gateway route. Clients call `ai-platform` and never learn which vendor answered.
 - **Tenants share the GPUs through queues, not node labels.** Each team gets a namespace with
   quota, limits, a Cilium network policy, an RBAC binding, an Argo CD project, a KAI Scheduler
-  queue with a guaranteed share and a hard cap, and its own virtual cluster (vCluster) whose
-  Pods are scheduled by KAI on the host.
+  queue with a guaranteed share and a hard cap, and its own virtual cluster (vCluster) as a
+  self-service API.
 - **Admission that refuses, not warns.** Kyverno's CEL-based policies refuse privileged
   containers, unlabelled Pods, foreign registries, and any platform image that was not signed
   by this repository's CI (Sigstore keyless, verified against Rekor).
@@ -46,6 +34,81 @@ security stack. Every claim it makes is checked by an end-to-end test you can ru
   secret value lives in Git.
 - **A simulated-GPU CI.** A kind cluster with the Run:ai fake GPU operator runs the whole
   platform, scheduling included, on a laptop or a GitHub runner.
+
+## How a request gets answered
+
+One hostname, one Gateway listener with the platform's own certificate, one Service, and
+whichever backend has the capacity. Adding a vendor is adding a Deployment with the shared
+label; removing one is a `git revert`.
+
+```mermaid
+flowchart LR
+  client(["client<br/>OpenAI SDK, curl"]) -->|"https://inference.…/v1/chat/completions"| gw
+  subgraph cluster["Kubernetes cluster"]
+    direction LR
+    gw["Cilium Gateway<br/>TLS terminated, platform CA"] --> route["HTTPRoute<br/>inference"]
+    route --> svc["Service inference<br/>selector app.kubernetes.io/name=inference"]
+    svc --> vllm["vLLM<br/>NVIDIA GB10 · arm64"]
+    svc --> rocm["llama.cpp ROCm<br/>AMD Ryzen AI Max+ · amd64"]
+    svc --> cpu["llama.cpp CPU<br/>ci only"]
+  end
+  classDef edge fill:#164e63,stroke:#22d3ee,color:#f0fdfa
+  classDef svc fill:#312e81,stroke:#818cf8,color:#eef2ff
+  classDef be fill:#3b0764,stroke:#a78bfa,color:#f5f3ff
+  class gw,route edge
+  class svc svc
+  class vllm,rocm,cpu be
+```
+
+## How the cluster is built
+
+`git push` is the only deployment action. Argo CD applies one Application per component from
+[apps/](apps), in sync waves, and waits for each wave to be Healthy before the next.
+
+```mermaid
+flowchart TB
+  push(["git push to main"]) --> argo["Argo CD<br/>app of apps · automated sync · self-heal · prune"]
+  argo --> wm1
+  subgraph waves["sync waves"]
+    direction TB
+    wm1["-1 · Prometheus Operator CRDs"] --> w0["0 · Cilium config · cert-manager · Vault · Kyverno · KAI Scheduler · GPU operators"]
+    w0 --> w1["1 · External Secrets"]
+    w1 --> w2["2 · Prometheus · Grafana · Alertmanager · OpenTelemetry · Gateway · Inference<br/>Trivy Operator · Kubescape · Falco · dashboards · alerts"]
+    w2 --> w3["3 · Admission policies"]
+    w3 --> w4["4 · Tenants: namespace, quota, network policy, KAI queue, RBAC, project, vCluster · GPU probe"]
+    w4 --> w5["5 · Tenant workloads"]
+  end
+  classDef wave fill:#1e1b4b,stroke:#818cf8,color:#eef2ff
+  class wm1,w0,w1,w2,w3,w4,w5 wave
+```
+
+Every component is a Kustomize overlay that pulls its upstream Helm chart at a pinned version,
+so `make lint` renders the whole platform exactly as Argo CD does and validates it offline.
+
+## How an image gets into a tenant namespace
+
+Supply chain and admission are one chain: CI signs, Kyverno verifies, the Pod runs by digest or
+not at all.
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant Dev as developer
+  participant CI as GitHub Actions
+  participant Reg as GHCR + Rekor
+  participant API as kube-apiserver
+  participant Kyv as Kyverno
+  Dev->>CI: push images/gpu-probe
+  CI->>Reg: build multi-arch, push, cosign sign (keyless, OIDC)
+  Dev->>API: apply Pod in team-a
+  API->>Kyv: admission review
+  Kyv->>Reg: fetch signature, verify identity and Rekor entry
+  alt signed by this repository's workflow
+    Kyv-->>API: admit, image mutated to its digest
+  else unsigned, foreign registry, privileged, unlabelled
+    Kyv-->>API: refuse with the policy name
+  end
+```
 
 ## Quick start: the ci environment on your machine
 
@@ -78,7 +141,8 @@ including how to reach the Gateway address from your machine. `make ci-down` rem
 ## What the end-to-end test proves
 
 Every proof is a script in [scripts/e2e.d](scripts/e2e.d), run by `make e2e` after all
-Applications are Healthy.
+Applications are Healthy. The same suite runs on every push to `main` on a GitHub runner; the
+`e2e` badge above is its last result.
 
 | Proof | Claim |
 |---|---|
@@ -90,10 +154,10 @@ Applications are Healthy.
 | 50 falco-shell | A terminal shell in a container is detected and forwarded to Alertmanager |
 | 60 / 61 reports | Trivy and Kubescape reports exist |
 | 70 tenant-rbac | A team member is confined to the team namespace and cannot touch its quota |
-| 71 tenant-network | Cross-tenant traffic is dropped |
+| 71 tenant-network | Cross-tenant traffic is dropped; DNS and the team's own services still work |
 | 72 kai-queue | A third GPU job waits for the queue limit, then runs |
 | 73 vcluster | A Pod created in a tenant's virtual cluster runs on the host, in the tenant namespace |
-| 80 inference | A chat completion is answered through the Gateway |
+| 80 inference | A chat completion sent through the Gateway over TLS is answered |
 
 ## The lab: real hardware
 
@@ -153,7 +217,7 @@ docs/          architecture, setup guides, ADRs, runbooks, SLOs, demo
 ## Documentation
 
 - [Architecture](docs/architecture.md): environments, sync waves, request path, tenancy,
-  scheduling, security controls, observability, supply chain.
+  scheduling, security controls, observability, supply chain, with diagrams per section.
 - [Set up the ci environment](docs/setup-ci.md) and [set up the lab](docs/setup-lab.md).
 - [Architecture decision records](docs/adr): why Kustomize with Helm charts under Argo CD, why
   Vault, why KAI and vCluster, why kube-proxy-free Cilium with Gateway API, and the rest.

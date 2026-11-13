@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-label="ai-platform-reference architecture">
+<defs><marker id="ah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#94a3b8"/></marker><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1120"/><stop offset="1" stop-color="#101a30"/></linearGradient></defs>
+<rect x="0" y="0" width="1200" height="700" rx="0" fill="url(#bg)" stroke="none" stroke-width="1"/>
+<text x="40" y="44" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="22" font-weight="700" fill="#e5e7eb" text-anchor="start">ai-platform-reference</text>
+<text x="40" y="66" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#94a3b8" text-anchor="start">GitOps-managed Kubernetes platform for AI workloads · one repository, two environments, every claim proven by a test</text>
+<rect x="40" y="110" width="220" height="64" rx="10" fill="#131c2e" stroke="#263347" stroke-width="1"/>
+<rect x="40" y="122" width="4" height="40" rx="2" fill="#818cf8"/>
+<text x="56" y="136" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#818cf8" text-anchor="start">git push</text>
+<text x="56" y="156" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#94a3b8" text-anchor="start">main · images built and signed by CI</text>
+<path d="M150,174 L150,202" stroke="#94a3b8" stroke-width="1.6" fill="none" marker-end="url(#ah)"/>
+<rect x="40" y="206" width="220" height="64" rx="10" fill="#131c2e" stroke="#263347" stroke-width="1"/>
+<rect x="40" y="218" width="4" height="40" rx="2" fill="#818cf8"/>
+<text x="56" y="232" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#818cf8" text-anchor="start">Argo CD</text>
+<text x="56" y="252" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#94a3b8" text-anchor="start">app of apps · sync waves · self-heal</text>
+<path d="M150,270 L150,298" stroke="#94a3b8" stroke-width="1.6" fill="none" marker-end="url(#ah)"/>
+<rect x="40" y="302" width="220" height="228" rx="10" fill="#131c2e" stroke="#263347" stroke-width="1"/>
+<rect x="40" y="314" width="4" height="204" rx="2" fill="#818cf8"/>
+<text x="56" y="328" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#818cf8" text-anchor="start">Sync waves</text>
+<text x="58" y="350" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#818cf8" text-anchor="start">-1</text>
+<text x="82" y="350" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#e5e7eb" text-anchor="start">Prometheus Operator CRDs</text>
+<text x="58" y="370" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#818cf8" text-anchor="start">0</text>
+<text x="82" y="370" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#e5e7eb" text-anchor="start">Cilium config · cert-manager · Vault</text>
+<text x="82" y="390" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#e5e7eb" text-anchor="start">Kyverno · KAI · GPU operators</text>
+<text x="58" y="410" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#818cf8" text-anchor="start">1</text>
+<text x="82" y="410" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#e5e7eb" text-anchor="start">External Secrets</text>
+<text x="58" y="430" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#818cf8" text-anchor="start">2</text>
+<text x="82" y="430" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#e5e7eb" text-anchor="start">Monitoring · Gateway · Inference</text>
+<text x="82" y="450" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#e5e7eb" text-anchor="start">OTel · Trivy · Kubescape · Falco</text>
+<text x="58" y="470" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#818cf8" text-anchor="start">3</text>
+<text x="82" y="470" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#e5e7eb" text-anchor="start">Admission policies</text>
+<text x="58" y="490" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#818cf8" text-anchor="start">4</text>
+<text x="82" y="490" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#e5e7eb" text-anchor="start">Tenants · GPU probe</text>
+<text x="58" y="510" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="12" font-weight="700" fill="#818cf8" text-anchor="start">5</text>
+<text x="82" y="510" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="normal" fill="#e5e7eb" text-anchor="start">Tenant workloads</text>
+<path d="M260,238 L300,238" stroke="#818cf8" stroke-width="1.6" fill="none" marker-end="url(#ah)"/>
+<text x="280" y="228" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" font-weight="normal" fill="#94a3b8" text-anchor="middle">applies</text>
+<rect x="300" y="110" width="860" height="430" rx="14" fill="#0f172a" stroke="#1e293b" stroke-width="1.2"/>
+<text x="1140" y="136" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#94a3b8" text-anchor="end">Kubernetes cluster · lab: RKE2 on bare metal · ci: kind with simulated GPUs</text>
+<rect x="320" y="150" width="230" height="196" rx="10" fill="#131c2e" stroke="#263347" stroke-width="1"/>
+<rect x="320" y="162" width="4" height="172" rx="2" fill="#22d3ee"/>
+<text x="336" y="174" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#22d3ee" text-anchor="start">Front door</text>
+<text x="336" y="192" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#94a3b8" text-anchor="start">networking</text>
+<circle cx="340" cy="208" r="2.5" fill="#22d3ee"/>
+<text x="350" y="212" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">Cilium Gateway API, one Gateway</text>
+<circle cx="340" cy="226" r="2.5" fill="#22d3ee"/>
+<text x="350" y="230" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">TLS from the platform CA</text>
+<circle cx="340" cy="244" r="2.5" fill="#22d3ee"/>
+<text x="350" y="248" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">HTTPRoutes: inference, argocd,</text>
+<text x="350" y="266" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">grafana, hubble, vault</text>
+<circle cx="340" cy="280" r="2.5" fill="#22d3ee"/>
+<text x="350" y="284" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">kube-proxy-free, LB-IPAM, L2</text>
+<circle cx="340" cy="298" r="2.5" fill="#22d3ee"/>
+<text x="350" y="302" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">Hubble flows and service map</text>
+<rect x="570" y="150" width="270" height="196" rx="10" fill="#131c2e" stroke="#263347" stroke-width="1"/>
+<rect x="570" y="162" width="4" height="172" rx="2" fill="#a78bfa"/>
+<text x="586" y="174" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#a78bfa" text-anchor="start">Inference</text>
+<text x="586" y="192" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#94a3b8" text-anchor="start">Gateway → Service → any backend</text>
+<circle cx="590" cy="208" r="2.5" fill="#a78bfa"/>
+<text x="600" y="212" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">One Service, one hostname</text>
+<circle cx="590" cy="226" r="2.5" fill="#a78bfa"/>
+<text x="600" y="230" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">OpenAI-compatible API, model ai-platform</text>
+<text x="586" y="248" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="600" fill="#94a3b8" text-anchor="start">backends behind the Service</text>
+<circle cx="590" cy="262" r="2.5" fill="#a78bfa"/>
+<text x="600" y="266" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">vLLM · NVIDIA · arm64</text>
+<circle cx="590" cy="280" r="2.5" fill="#a78bfa"/>
+<text x="600" y="284" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">llama.cpp ROCm · AMD · amd64</text>
+<circle cx="590" cy="298" r="2.5" fill="#a78bfa"/>
+<text x="600" y="302" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">llama.cpp CPU · ci</text>
+<circle cx="590" cy="316" r="2.5" fill="#a78bfa"/>
+<text x="600" y="320" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">Rollback is a git revert</text>
+<rect x="860" y="150" width="280" height="196" rx="10" fill="#131c2e" stroke="#263347" stroke-width="1"/>
+<rect x="860" y="162" width="4" height="172" rx="2" fill="#fbbf24"/>
+<text x="876" y="174" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#fbbf24" text-anchor="start">Tenancy &amp; scheduling</text>
+<text x="876" y="192" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#94a3b8" text-anchor="start">team-a, team-b</text>
+<circle cx="880" cy="208" r="2.5" fill="#fbbf24"/>
+<text x="890" y="212" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">Per team: namespace, quota, LimitRange,</text>
+<text x="890" y="230" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">CiliumNetworkPolicy, RBAC, AppProject</text>
+<circle cx="880" cy="244" r="2.5" fill="#fbbf24"/>
+<text x="890" y="248" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">vCluster: own API, Pods synced to the host</text>
+<circle cx="880" cy="262" r="2.5" fill="#fbbf24"/>
+<text x="890" y="266" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">KAI queue: guaranteed quota, hard limit,</text>
+<text x="890" y="284" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">fair share of what is idle</text>
+<circle cx="880" cy="298" r="2.5" fill="#fbbf24"/>
+<text x="890" y="302" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">Opt in: schedulerName kai-scheduler</text>
+<rect x="320" y="362" width="390" height="166" rx="10" fill="#131c2e" stroke="#263347" stroke-width="1"/>
+<rect x="320" y="374" width="4" height="142" rx="2" fill="#34d399"/>
+<text x="336" y="386" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#34d399" text-anchor="start">Security</text>
+<text x="336" y="404" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#94a3b8" text-anchor="start">admission that refuses, runtime that alerts</text>
+<circle cx="340" cy="420" r="2.5" fill="#34d399"/>
+<text x="350" y="424" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">cert-manager: platform CA, every certificate</text>
+<circle cx="340" cy="438" r="2.5" fill="#34d399"/>
+<text x="350" y="442" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">Vault + External Secrets: no secret in Git</text>
+<circle cx="340" cy="456" r="2.5" fill="#34d399"/>
+<text x="350" y="460" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">Kyverno CEL: no privileged, labels required,</text>
+<text x="350" y="478" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">allowed registries, cosign keyless signatures</text>
+<circle cx="340" cy="492" r="2.5" fill="#34d399"/>
+<text x="350" y="496" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">Trivy Operator · Kubescape posture · Falco runtime</text>
+<rect x="730" y="362" width="410" height="166" rx="10" fill="#131c2e" stroke="#263347" stroke-width="1"/>
+<rect x="730" y="374" width="4" height="142" rx="2" fill="#fb7185"/>
+<text x="746" y="386" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#fb7185" text-anchor="start">Observability</text>
+<text x="746" y="404" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#94a3b8" text-anchor="start">metrics that know about GPUs</text>
+<circle cx="750" cy="420" r="2.5" fill="#fb7185"/>
+<text x="760" y="424" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">Prometheus · Alertmanager · Grafana · OpenTelemetry</text>
+<circle cx="750" cy="438" r="2.5" fill="#fb7185"/>
+<text x="760" y="442" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">DCGM (NVIDIA) and ROCm exporters, GPU dashboards</text>
+<circle cx="750" cy="456" r="2.5" fill="#fb7185"/>
+<text x="760" y="460" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">Inference: latency, queue, backend health</text>
+<circle cx="750" cy="474" r="2.5" fill="#fb7185"/>
+<text x="760" y="478" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">Alerts with runbooks: XID, thermal, idle GPU,</text>
+<text x="760" y="496" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12.5" font-weight="normal" fill="#e5e7eb" text-anchor="start">backend down, latency, queued requests, CVEs</text>
+<text x="435" y="96" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#22d3ee" text-anchor="middle">clients · https://inference.&lt;site&gt;/v1/chat/completions</text>
+<path d="M435,104 L435,148" stroke="#22d3ee" stroke-width="1.6" fill="none" marker-end="url(#ah)"/>
+<text x="40" y="594" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="15" font-weight="600" fill="#60a5fa" text-anchor="start">Nodes</text>
+<text x="40" y="613" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#94a3b8" text-anchor="start">labelled and tainted per GPU vendor</text>
+<rect x="300" y="570" width="204" height="58" rx="10" fill="#131c2e" stroke="#263347" stroke-width="1"/>
+<rect x="300" y="580" width="4" height="38" rx="2" fill="#60a5fa"/>
+<text x="316" y="594" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#60a5fa" text-anchor="start">control plane · x86</text>
+<text x="316" y="613" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#94a3b8" text-anchor="start">RKE2 server · platform services</text>
+<rect x="518" y="570" width="204" height="58" rx="10" fill="#131c2e" stroke="#263347" stroke-width="1"/>
+<rect x="518" y="580" width="4" height="38" rx="2" fill="#60a5fa"/>
+<text x="534" y="594" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#60a5fa" text-anchor="start">DGX Spark · arm64</text>
+<text x="534" y="613" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#94a3b8" text-anchor="start">GB10 · GPU Operator · vLLM</text>
+<rect x="736" y="570" width="204" height="58" rx="10" fill="#131c2e" stroke="#263347" stroke-width="1"/>
+<rect x="736" y="580" width="4" height="38" rx="2" fill="#60a5fa"/>
+<text x="752" y="594" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#60a5fa" text-anchor="start">Strix Halo · amd64</text>
+<text x="752" y="613" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#94a3b8" text-anchor="start">Ryzen AI Max+ · ROCm · llama.cpp</text>
+<rect x="954" y="570" width="204" height="58" rx="10" fill="#131c2e" stroke="#263347" stroke-width="1"/>
+<rect x="954" y="580" width="4" height="38" rx="2" fill="#60a5fa"/>
+<text x="970" y="594" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#60a5fa" text-anchor="start">ci: kind on Docker</text>
+<text x="970" y="613" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11.5" font-weight="normal" fill="#94a3b8" text-anchor="start">fake GPUs · GitHub Actions</text>
+<text x="1160" y="684" font-family="ui-sans-serif,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif" font-size="11" font-weight="normal" fill="#94a3b8" text-anchor="end">details: docs/architecture.md · github.com/blacksoxx/ai-platform-reference</text>
+</svg>

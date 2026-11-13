@@ -5,6 +5,8 @@ how a request reaches a model, how tenants are kept apart, and which control pro
 Decisions and their alternatives are in the [ADRs](adr/); procedures are in
 [setup-ci.md](setup-ci.md), [setup-lab.md](setup-lab.md) and the [runbooks](runbooks/).
 
+![Architecture poster](img/platform.svg)
+
 ## 1. Overview
 
 ```mermaid
