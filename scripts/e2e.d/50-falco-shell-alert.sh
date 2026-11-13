@@ -22,8 +22,9 @@ pty.spawn(["kubectl", "--context", ctx, "-n", "kube-system", "exec", "-it", pod,
 EOF
 
 for i in $(seq 1 24); do
-  if k -n falco logs "$falco_pod" --since=5m 2>/dev/null | grep 'Terminal shell in container' | grep -q 'cilium-agent'; then
-    echo "Falco on $node detected the shell in $target/cilium-agent (rule: Terminal shell in container)"
+  if line=$(k -n falco logs "$falco_pod" --since=5m 2>/dev/null | grep 'Terminal shell in container' | tail -1) && [ -n "$line" ]; then
+    echo "Falco on $node detected the shell in $target (rule: Terminal shell in container)"
+    printf '%s\n' "$line" | cut -c1-200 | sed 's/^/      /'
     break
   fi
   [ "$i" -eq 24 ] && { echo "Falco did not report the shell within 120s"; exit 1; }

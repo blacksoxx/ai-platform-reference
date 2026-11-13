@@ -11,26 +11,26 @@ Decisions and their alternatives are in the [ADRs](adr/); procedures are in
 
 ```mermaid
 flowchart LR
-  subgraph git[Git: this repository]
-    apps[apps/&lt;env&gt;<br/>app of apps]
-    platform[platform/*<br/>overlays]
-    tenants[tenants/*]
-    policies[policies/]
-    workloads[workloads/*]
+  subgraph git["Git: this repository"]
+    apps["apps/&lt;env&gt;<br/>app of apps"]
+    platform["platform/*<br/>overlays"]
+    tenants["tenants/*"]
+    policies["policies/"]
+    workloads["workloads/*"]
   end
-  argocd[Argo CD]
-  git -->|poll, 60 s in ci| argocd
-  argocd -->|sync waves -1 .. 5| cluster
-  subgraph cluster[Kubernetes cluster: kind in ci, RKE2 in lab]
-    cni[Cilium: CNI, kube-proxy replacement,<br/>network policy, Gateway API, Hubble]
-    sec[cert-manager · Vault · External Secrets<br/>Kyverno · Trivy · Kubescape · Falco]
-    obs[Prometheus · Alertmanager · Grafana<br/>OpenTelemetry Collector]
-    gpu[GPU layer: fake-gpu-operator (ci)<br/>NVIDIA GPU Operator + AMD device plugin (lab)]
-    sched[KAI Scheduler: queues with quota]
-    ten[team-a / team-b: namespace, quota,<br/>network policy, queue, RBAC, vCluster]
-    inf[inference: one Service, one route,<br/>vLLM (NVIDIA) · llama.cpp (AMD, CPU)]
+  argocd["Argo CD"]
+  git -->|"poll, 120 s in ci"| argocd
+  argocd -->|"sync waves -1 to 5"| cluster
+  subgraph cluster["Kubernetes cluster: kind in ci, RKE2 in lab"]
+    cni["Cilium: CNI, kube-proxy replacement,<br/>network policy, Gateway API, Hubble"]
+    sec["cert-manager · Vault · External Secrets<br/>Kyverno · Trivy · Kubescape · Falco"]
+    obs["Prometheus · Alertmanager · Grafana<br/>OpenTelemetry Collector"]
+    gpu["GPU layer: fake-gpu-operator (ci)<br/>NVIDIA GPU Operator + AMD device plugin (lab)"]
+    sched["KAI Scheduler: queues with quota"]
+    ten["team-a / team-b: namespace, quota,<br/>network policy, queue, RBAC, vCluster"]
+    inf["inference: one Service, one route,<br/>vLLM (NVIDIA) · llama.cpp (AMD, CPU)"]
   end
-  client((client)) -->|HTTPS, OpenAI API| gw[Gateway]
+  client(("client")) -->|"HTTPS, OpenAI API"| gw["Gateway"]
   gw --> inf
 ```
 
@@ -105,8 +105,8 @@ values in `base/values.yaml`; Argo CD renders with `kustomize build --enable-hel
 ```mermaid
 sequenceDiagram
   participant C as client
-  participant N as node (Cilium, eBPF)
-  participant G as Gateway (Envoy, programmed by Cilium)
+  participant N as node, Cilium eBPF
+  participant G as Gateway, Envoy programmed by Cilium
   participant S as Service inference
   participant B as backend Pod
   C->>N: ARP for 172.18.255.10 (L2 announcement, one node answers)
@@ -163,11 +163,11 @@ node is theirs, and nothing idles because a label pinned it to the wrong box.
 
 ```mermaid
 flowchart TB
-  subgraph host[host cluster]
-    subgraph ns[namespace team-a: label ai-platform.io/tenant=true]
+  subgraph host["host cluster"]
+    subgraph ns["namespace team-a: label ai-platform.io/tenant=true"]
       quota[ResourceQuota · LimitRange]
       cnp[CiliumNetworkPolicy]
-      rb[RoleBinding: group team-a → edit]
+      rb["RoleBinding: group team-a → edit"]
       vc[vCluster control plane<br/>StatefulSet, API on Service team-a]
       synced[synced Pods<br/>host default scheduler]
     end
@@ -176,7 +176,7 @@ flowchart TB
     kai[KAI Scheduler]
     kyv[Kyverno policies<br/>namespaceSelector tenant=true]
   end
-  dev((team member)) -->|kubeconfig vc-team-a| vc
+  dev(("team member")) -->|"kubeconfig vc-team-a"| vc
   vc -->|sync| synced
   queued[Pods deployed in team-a<br/>schedulerName kai-scheduler, queue team-a]
   proj -->|GitOps| queued

@@ -6,6 +6,11 @@ name: e2e
 on:
   push:
     branches: [main]
+    # Documentation changes do not change what the cluster runs.
+    paths-ignore:
+      - "docs/**"
+      - "**.md"
+      - "LICENSE"
   workflow_dispatch:
 
 permissions:

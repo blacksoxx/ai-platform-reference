@@ -5,14 +5,14 @@
 #   1. our arm64 gpu-probe image without a GPU request, to show the difference
 #   2. the same image with --gpus all: nvidia-smi appears inside the container
 #   3. the CUDA vectorAdd sample from the GPU Operator docs
-# Every image this script loaded or pulled is removed at the end, so the shared
-# company machine is left as it was found. Nothing is installed on the host.
+# Every image this script loaded or pulled is removed at the end, so the machine is left
+# as it was found. Nothing is installed on the host.
 #
-# Usage: scripts/hardware/check-nvidia-node.sh [ssh-host]      default host: sparky
-# Needs: the probe image built locally (make image-gpu-probe) and ssh access.
+# Usage: scripts/hardware/check-nvidia-node.sh <ssh-host>
+# Needs: the probe image built locally (make image-gpu-probe) and ssh access to the node.
 set -eu
 
-HOST=${1:-sparky}
+HOST=${1:?usage: $0 <ssh-host>}
 PROBE_IMAGE=${GPU_PROBE_IMAGE:-ai-platform-reference/gpu-probe:dev}
 # From the NVIDIA GPU Operator docs, "Verification: Running Sample GPU Applications",
 # https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html

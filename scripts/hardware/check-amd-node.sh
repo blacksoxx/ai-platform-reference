@@ -1,21 +1,20 @@
 #!/bin/sh
 # AMD node check: prove that a container on the node sees the GPU (written for the Ryzen AI Max+ "Strix Halo").
 #
-# STATUS: written on 2026-11-09, not yet run on hardware; the Halo was unreachable that
-# day. Run it as soon as the box is reachable.
+# STATUS: not yet run on hardware (docs/setup-lab.md, validation status).
 #
 # What runs on the Halo, every container with --rm so none is left behind:
 #   1. our amd64 gpu-probe image without devices: /dev/kfd and /dev/dri absent
 #   2. the same image with the ROCm device nodes passed through
 #   3. a ROCm userland image running rocminfo and rocm-smi against the host driver
-# Every image this script loaded or pulled is removed at the end, so the shared
-# company machine is left as it was found. Nothing is installed on the host.
+# Every image this script loaded or pulled is removed at the end, so the machine is left
+# as it was found. Nothing is installed on the host.
 #
-# Usage: scripts/hardware/check-amd-node.sh [ssh-host]       default host: halo
-# Needs: the probe image built locally (make image-gpu-probe) and ssh access.
+# Usage: scripts/hardware/check-amd-node.sh <ssh-host>
+# Needs: the probe image built locally (make image-gpu-probe) and ssh access to the node.
 set -eu
 
-HOST=${1:-halo}
+HOST=${1:?usage: $0 <ssh-host>}
 PROBE_IMAGE=${GPU_PROBE_IMAGE:-ai-platform-reference/gpu-probe:dev}
 # ROCm on Radeon and Ryzen docs, https://rocm.docs.amd.com/projects/radeon-ryzen/en/latest/index.html :
 # "This ROCm on Radeon and Ryzen documentation covers releases through 7.2.1" and the support
