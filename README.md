@@ -102,6 +102,13 @@ GPU nodes. Node configuration, the Cilium values and a per-role bootstrap live i
 [clusters/lab](clusters/lab); the procedure, from the join token to the first completion on
 each GPU, is [docs/setup-lab.md](docs/setup-lab.md).
 
+**Validation status.** The ci environment is what the badges and the proofs cover: the whole
+platform converges and all thirteen proofs pass on GitHub Actions (a 4-vCPU runner) and on a
+16-core x86 host. The lab environment renders and lints with the same `make lint` and mirrors
+ci component by component, but it has not yet run on the hardware: no proof has crossed a real
+NVIDIA or AMD GPU. Until this paragraph changes, read `clusters/lab` and the lab overlays as
+the design, checked by review and rendering, not by a run.
+
 ## Components
 
 | Concern | Component | Version |

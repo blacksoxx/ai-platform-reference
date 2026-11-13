@@ -4,6 +4,11 @@ The lab is the platform on real hardware: an RKE2 cluster whose control plane ru
 x86 box and whose GPU nodes are an NVIDIA DGX Spark (GB10, arm64) and an AMD Ryzen AI Max+
 "Strix Halo" machine (amd64). It is driven by the same repository as ci, from `apps/lab/`.
 
+**Status: not yet run on the hardware.** The ci environment is validated end to end; the lab
+overlays render and lint, and the steps below are the plan. The places where real hardware is
+most likely to disagree with it (the NVIDIA runtime in RKE2's containerd, the AMD device nodes,
+storage) are called out where they occur. The first run will turn this paragraph into a record.
+
 The procedure below is what `clusters/lab/bootstrap.sh` automates per role. Read it once in
 full: a few values are site-specific and must be set before anything is installed.
 
